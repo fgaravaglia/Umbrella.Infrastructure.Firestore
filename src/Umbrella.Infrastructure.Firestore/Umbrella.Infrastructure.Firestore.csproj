@@ -14,8 +14,8 @@
   <PropertyGroup>
     <Company>Innova Solutions</Company>
     <Authors>FG</Authors>
-    <Description>Library to provide a client for GCP Firestore</Description>
-    <Copyright>FG 2022</Copyright>
+    <Description>Library to provide a client for GCP Firestore, with Repository Pattern implementation</Description>
+    <Copyright>FG 2022 - 2023</Copyright>
     <Version>1.0.0.0</Version>
     <VersionNumber>1.0.0.0</VersionNumber>
     <PackageProjectUrl>https://github.com/fgaravaglia/Umbrella.Infrastructure.Firestore</PackageProjectUrl>

@@ -1,5 +1,6 @@
 # Umbrella.Infrastructure.Firestore
-Library to provide a client for GCP Firestore
+Library to provide a client for GCP Firestore, with Repository Pattern implementation
+
 Current Version: Stable - 1.0.0 - branch MASTER
 
 [![Build Status](https://garaproject.visualstudio.com/UmbrellaFramework/_apis/build/status/Umbrella.Infrastructure.Firestore?branchName=main)](https://garaproject.visualstudio.com/UmbrellaFramework/_build/latest?definitionId=73&branchName=main)
