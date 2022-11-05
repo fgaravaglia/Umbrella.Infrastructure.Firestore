@@ -101,17 +101,17 @@ steps:
       MinorVersion: ${{ parameters.MinorVersion }}
       buildNumber: $(Build.BuildId)
 
-  # - template: .\devops\templates\dotnet-build.yaml
-  #   parameters:
-  #     projPath: src/Umbrella.Infrastructure.Firestore.Tests
-  #     projName: Umbrella.Infrastructure.Firestore.Tests
-  #     publishRequired: false
+  - template: .\devops\templates\dotnet-build.yaml
+    parameters:
+      projPath: src/Umbrella.Infrastructure.Firestore.Tests
+      projName: Umbrella.Infrastructure.Firestore.Tests
+      publishRequired: false
 
-  # ############################## TEST #################################
-  # - template: .\devops\templates\dotnet-test.yaml
-  #   parameters:
-  #     projPath: src/Umbrella.Infrastructure.Firestore.Tests
-  #     projName: Umbrella.Infrastructure.Firestore.Tests
+  ############################## TEST #################################
+  - template: .\devops\templates\dotnet-test.yaml
+    parameters:
+      projPath: src/Umbrella.Infrastructure.Firestore.Tests
+      projName: Umbrella.Infrastructure.Firestore.Tests
 
   - task: SonarCloudAnalyze@1
     displayName: "Run Sonar Cloud Analysis"
