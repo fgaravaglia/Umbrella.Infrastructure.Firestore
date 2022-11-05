@@ -1,0 +1,76 @@
+parameters:
+  - name: projPath
+    displayName: "Path of .proj file"
+    default: ""
+  - name: projName
+    displayName: "Name of .proj file, without extension"
+    default: ""
+  - name: MajorVersion
+    displayName: "Major Version"
+    default: 0
+  - name: MinorVersion
+    displayName: "Minor Version"
+    default: 1
+  - name: buildNumber
+    displayName: "Number of current Build"
+    default: ""
+  - name: buildConfiguration
+    default: "Release"
+
+  ### Optional Values ###
+  - name: authors
+    displayName: "Names of authors of the target package"
+    default: "FG"
+  - name: company
+    displayName: "Company that produces the target package"
+    default: "Innova Solutions"
+  - name: copyright
+    displayName: "Copyright"
+    default: "FG 2022"
+
+steps:
+  # - powershell: |
+  #     Write-Host "projPath .........................> ${{ parameters.projPath }}"
+  #     Write-Host "projName .........................> ${{ parameters.projName }}"
+  #     Write-Host "buildNumber ......................> ${{ parameters.buildNumber }}"
+  #   displayName: Print Parameters
+
+  # task to restore dependencies
+  - task: DotNetCoreCLI@2
+    displayName: ${{ parameters.projName }} - Restore
+    inputs:
+      command: "restore"
+      projects: "${{ parameters.projPath }}/*.csproj"
+
+  - task: Assembly-Info-NetCore@2
+    displayName: ${{ parameters.projName }} - Set Info
+    inputs:
+      Path: "${{ parameters.projPath }}"
+      FileNames: "**/*.csproj"
+      InsertAttributes: true
+      FileEncoding: auto
+      WriteBOM: false
+      Authors: ${{ parameters.authors }}
+      Company: ${{ parameters.company }}
+      Copyright: ${{ parameters.copyright }}
+      VersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.0.0
+      FileVersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.0.0
+      InformationalVersion: ${{ parameters.buildNumber }}
+
+  # task to build the solution
+  - task: DotNetCoreCLI@2
+    displayName: ${{ parameters.projName }} - Build
+    inputs:
+      command: "build"
+      arguments: "--configuration ${{ parameters.buildConfiguration }} -v=q --no-restore"
+      projects: "${{ parameters.projPath }}/*.csproj"
+
+  # task to create the nuget package
+  - task: DotNetCoreCLI@2
+    displayName: ${{ parameters.projName }} - Pack
+    inputs:
+      command: "pack"
+      packagesToPack: "${{ parameters.projPath }}/${{ parameters.projName }}.csproj"
+      nobuild: true
+      versioningScheme: "byEnvVar"
+      versionEnvVar: "nugetVersion"

@@ -1,0 +1,27 @@
+parameters:
+  - name: projPath
+    default: ""
+  - name: projName
+    displayName: "name of csProj file (without extension)"
+    default: ""
+  - name: testReportFileName
+    displayName: "FileName of test report generate by coverlet"
+    default: coverage.cobertura.xml
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: "dotnet test on ${{ parameters.projName }}"
+    inputs:
+      command: test
+      projects: "${{ parameters.projPath }}/${{ parameters.projName }}.csproj"
+      arguments: '--logger trx --configuration Debug --collect "XPlat Code coverage" -- RunConfiguration.DisableAppDomain=true'
+      testRunTitle: ${{ parameters.projName }}
+
+  - script: 'reportgenerator -reports:$(Agent.TempDirectory)/**/${{ parameters.testReportFileName }} -targetdir:$(Build.SourcesDirectory)/coverlet/reports -reporttypes:"Cobertura"'
+    displayName: "Create Coveage reports"
+
+  - task: PublishCodeCoverageResults@1
+    displayName: "Publish code coverage"
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: "$(Build.SourcesDirectory)/coverlet/reports/Cobertura.xml"

@@ -1,0 +1,47 @@
+parameters:
+  - name: projPath
+    displayName: "Path of .proj file"
+    default: ""
+  - name: projName
+    displayName: "Name of .proj file, without extension"
+    default: ""
+  - name: buildConfiguration
+    default: "Release"
+  - name: publishRequired
+    type: boolean
+    default: true
+  - name: isWebProj
+    type: boolean
+    default: false
+
+steps:
+  - powershell: |
+      Write-Host "projPath .........................> ${{ parameters.projPath }}"
+      Write-Host "projName .........................> ${{ parameters.projName }}"
+    displayName: Print Parameters
+    condition: eq(${{ parameters.isWebProj }}, true)
+
+  # task to restore dependencies
+  - task: DotNetCoreCLI@2
+    displayName: ${{ parameters.projName }} - Restore
+    inputs:
+      command: "restore"
+      projects: "${{ parameters.projPath }}/*.csproj"
+
+  # task to build the solution
+  - task: DotNetCoreCLI@2
+    displayName: ${{ parameters.projName }} - Build
+    inputs:
+      command: "build"
+      arguments: "--configuration ${{ parameters.buildConfiguration }} -v=q --no-restore"
+      projects: "${{ parameters.projPath }}/*.csproj"
+
+  - task: DotNetCoreCLI@2
+    displayName: ${{ parameters.projName }} - Publish
+    inputs:
+      command: "publish"
+      publishWebProjects: ${{ parameters.isWebProj }}
+      projects: "${{ parameters.projPath }}/*.csproj"
+      arguments: "--configuration Release --no-restore -o $(build.artifactstagingdirectory)/binaries"
+      zipAfterPublish: true
+    condition: eq(${{ parameters.publishRequired }}, true)

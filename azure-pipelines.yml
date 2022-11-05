@@ -1,0 +1,142 @@
+trigger:
+  branches:
+    include:
+      - master
+    exclude:
+      - develop
+  paths:
+    include:
+      - src
+#     exclude:
+#       - script/*
+#       - libs/*
+#       - devops/*
+#
+schedules:
+  - cron: "0 12 * * 0"
+    displayName: Weekly Sunday build
+    branches:
+      include:
+        - master
+
+pool:
+  vmImage: "ubuntu-latest"
+
+parameters:
+  - name: MajorVersion
+    displayName: "Major Version"
+    default: 1
+  - name: MinorVersion
+    displayName: "Minor Version"
+    default: 0
+  - name: authors
+    displayName: "Names of authors of the target package"
+    default: "FG"
+  - name: company
+    displayName: "Company that produces the target package"
+    default: "Innova Solutions"
+  - name: copyright
+    displayName: "Copyright"
+    default: "FG 2022"
+  - name: SonarScanEnabled
+    displayName: "Enable Sonar Scan"
+    type: boolean
+    default: False
+  - name: PublishPackage
+    displayName: "Publish Package to Nuget.Org"
+    type: boolean
+    default: False
+  - name: NugetApiKey
+    displayName: "APIKEY to Publish Package on Nuget.Org"
+    default: "set here your Nuget Api Key"
+
+variables:
+  buildConfiguration: "Release"
+  targetFramework: "6.x"
+  nugetVersion: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId)
+  testReportFileName: cobertura.xml
+
+steps:
+  ##### use the right version of .Net core
+  - task: UseDotNet@2
+    displayName: Use .NET target version
+    inputs:
+      packageType: "sdk"
+      version: $(targetFramework)
+
+  - task: NuGetToolInstaller@1
+    displayName: "Use Nuget.exe"
+    inputs:
+      checkLatest: true
+
+  - script: |
+      echo "Build ID      => $(Build.BuildId)"
+      echo "Build Number  => $(Build.BuildNumber)"
+      dotnet tool install --global dotnet-reportgenerator-globaltool
+    displayName: "Install ReportGenerator tool"
+
+  - task: SonarCloudPrepare@1
+    displayName: "Prepare analysis on SonarCloud"
+    inputs:
+      SonarCloud: "SonarQubeCloud"
+      organization: "fgaravaglia"
+      scannerMode: "MSBuild"
+      projectKey: "Umbrella.Infrastructure.Firestore"
+      projectName: "Umbrella.Infrastructure.Firestore"
+      projectVersion: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}"
+      extraProperties: |
+        # Additional properties that will be passed to the scanner, 
+        # Put one key=value per line, example:
+        sonar.exclusions=**/obj/**,**/*.dll,**/*.Tests/**,**/*.Tests/**/*.cs
+        sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/$(testReportFileName)
+    condition: eq(${{ parameters.SonarScanEnabled }}, true)
+
+  - template: .\devops\templates\dotnet-package-pack.yaml
+    parameters:
+      projPath: src/Umbrella.Infrastructure.Firestore
+      projName: Umbrella.Infrastructure.Firestore
+      MajorVersion: ${{ parameters.MajorVersion }}
+      MinorVersion: ${{ parameters.MinorVersion }}
+      buildNumber: $(Build.BuildId)
+
+  # - template: .\devops\templates\dotnet-build.yaml
+  #   parameters:
+  #     projPath: src/CliArgumentParser.Tests
+  #     projName: CliArgumentParser.Tests
+  #     publishRequired: false
+
+  ############################## TEST #################################
+  # - template: .\devops\templates\dotnet-test.yaml
+  #   parameters:
+  #     projPath: src/CliArgumentParser.Tests
+  #     projName: CliArgumentParser.Tests
+
+  - task: SonarCloudAnalyze@1
+    displayName: "Run Sonar Cloud Analysis"
+    condition: eq(${{ parameters.SonarScanEnabled }}, true)
+
+  - task: SonarCloudPublish@1
+    displayName: "Publish Sonar Cloud Analysis"
+    inputs:
+      pollingTimeoutSec: "300"
+    condition: eq(${{ parameters.SonarScanEnabled }}, true)
+
+  ############################## PUBLISH DROP #################################
+  - task: PublishBuildArtifacts@1
+    displayName: publish artifacts
+    inputs:
+      PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+      ArtifactName: "drop"
+      publishLocation: "Container"
+
+  - task: DotNetCoreCLI@2
+    displayName: Push to Nuget.org
+    inputs:
+      command: "custom"
+      custom: nuget
+      arguments: >
+        push $(Build.ArtifactStagingDirectory)/CliArgumentParser.*.nupkg
+        -s https://api.nuget.org/v3/index.json
+        -k ${{ parameters.NugetApiKey }}
+    condition: eq(${{ parameters.PublishPackage }}, true)
