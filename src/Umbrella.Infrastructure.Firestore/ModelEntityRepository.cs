@@ -57,9 +57,9 @@ namespace Umbrella.Infrastructure.Firestore
 
         public virtual T GetById(string keyValue)
         {
-            var doc = (Tdoc)this._Repo.GetAsync(FirestoreDataReference.AsBaseFirestoreData(keyValue)).Result;
+            var doc = this._Repo.GetAsync(FirestoreDataReference.AsBaseFirestoreData(keyValue)).Result;
             if(doc != null)
-                return this._Mapper.FromFirestoreDoc(doc);
+                return this._Mapper.FromFirestoreDoc((Tdoc)doc);
             else 
                 return default(T);
         }
@@ -73,11 +73,11 @@ namespace Umbrella.Infrastructure.Firestore
             var matchDoc = this._Mapper.ToFirestoreDocument(dto);
 
             this._Logger.LogDebug("Reading Doc " + matchDoc.Id);
-            var existing = (Tdoc)this._Repo.GetAsync(matchDoc).Result;
+            var existing = this._Repo.GetAsync(matchDoc).Result;
             if (existing != null)
-                matchDoc = (Tdoc)this._Repo.UpdateAsync(matchDoc).Result;
+                matchDoc = this._Repo.UpdateAsync(matchDoc).Result;
             else
-                matchDoc = (Tdoc)this._Repo.AddAsync(matchDoc).Result;
+                matchDoc = this._Repo.AddAsync(matchDoc).Result;
             this._Logger.LogDebug($"Document {matchDoc.Id} of type {typeof(T).FullName} succesfully persisted on Firestore");
             return matchDoc.Id;
         }

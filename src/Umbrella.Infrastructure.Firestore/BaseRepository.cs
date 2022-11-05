@@ -13,8 +13,8 @@ namespace Umbrella.Infrastructure.Firestore
     /// <typeparam name="T"></typeparam>
     public class BaseRepository<T> : IFirestoreDataRepository<T> where T : IBaseFirestoreData
     {
-        private readonly bool _AutoGenerateID;
-        private string _CollectionName;
+        readonly bool _AutoGenerateID;
+        readonly string _CollectionName;
         public readonly FirestoreDb _firestoreDb;
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Umbrella.Infrastructure.Firestore
             }
             else
             {
-                var doc = await colRef.Document(entity.Id).SetAsync(entity);
+                await colRef.Document(entity.Id).SetAsync(entity);
             }
             entity.SetDocumentId(id);
             return entity;
@@ -87,8 +87,6 @@ namespace Umbrella.Infrastructure.Firestore
         {
             var recordRef = _firestoreDb.Collection(this._CollectionName).Document(entity.Id);
             await recordRef.SetAsync(entity, SetOptions.MergeAll);
-            // GO GET RECORD FROM DATABASE:
-            // return (T)await GetAsync(entity);
             return entity;
         }
 
