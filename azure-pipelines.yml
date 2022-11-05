@@ -52,6 +52,7 @@ parameters:
 variables:
   buildConfiguration: "Release"
   targetFramework: "6.x"
+  packageId: Umbrella.Infrastructure.Firestore
   nugetVersion: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId)
   testReportFileName: cobertura.xml
 
@@ -80,8 +81,8 @@ steps:
       SonarCloud: "SonarCloud"
       organization: "fgaravaglia"
       scannerMode: "MSBuild"
-      projectKey: "Umbrella.Infrastructure.Firestore"
-      projectName: "Umbrella.Infrastructure.Firestore"
+      projectKey: $(packageId)
+      projectName: $(packageId)
       projectVersion: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}"
       extraProperties: |
         # Additional properties that will be passed to the scanner,
@@ -94,23 +95,23 @@ steps:
 
   - template: .\devops\templates\dotnet-package-pack.yaml
     parameters:
-      projPath: src/Umbrella.Infrastructure.Firestore
-      projName: Umbrella.Infrastructure.Firestore
+      projPath: src/$(packageId)
+      projName: $(packageId)
       MajorVersion: ${{ parameters.MajorVersion }}
       MinorVersion: ${{ parameters.MinorVersion }}
       buildNumber: $(Build.BuildId)
 
   - template: .\devops\templates\dotnet-build.yaml
     parameters:
-      projPath: src/Umbrella.Infrastructure.Firestore.Tests
-      projName: Umbrella.Infrastructure.Firestore.Tests
+      projPath: src/$(packageId).Tests
+      projName: $(packageId).Tests
       publishRequired: false
 
   ############################## TEST #################################
   - template: .\devops\templates\dotnet-test.yaml
     parameters:
-      projPath: src/Umbrella.Infrastructure.Firestore.Tests
-      projName: Umbrella.Infrastructure.Firestore.Tests
+      projPath: src/$(packageId).Tests
+      projName: $(packageId).Tests
 
   - task: SonarCloudAnalyze@1
     displayName: "Run Sonar Cloud Analysis"
@@ -136,7 +137,7 @@ steps:
       command: "custom"
       custom: nuget
       arguments: >
-        push $(Build.ArtifactStagingDirectory)/CliArgumentParser.*.nupkg
+        push $(Build.ArtifactStagingDirectory)/$(packageId).*.nupkg
         -s https://api.nuget.org/v3/index.json
         -k ${{ parameters.NugetApiKey }}
     condition: eq(${{ parameters.PublishPackage }}, true)
