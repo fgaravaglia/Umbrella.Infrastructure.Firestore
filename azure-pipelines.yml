@@ -40,7 +40,7 @@ parameters:
   - name: SonarScanEnabled
     displayName: "Enable Sonar Scan"
     type: boolean
-    default: False
+    default: True
   - name: PublishPackage
     displayName: "Publish Package to Nuget.Org"
     type: boolean
