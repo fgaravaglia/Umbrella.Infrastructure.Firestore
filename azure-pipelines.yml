@@ -115,7 +115,7 @@ steps:
       PackageId: "$(packageId)-develop"
       VersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.0.0
       FileVersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.0.0
-      InformationalVersion: ${{ parameters.buildNumber }}
+      InformationalVersion: $(Build.BuildId)
 
   - template: .\devops\templates\dotnet-build.yaml
     parameters:
