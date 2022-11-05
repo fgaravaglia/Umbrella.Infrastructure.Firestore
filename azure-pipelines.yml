@@ -95,8 +95,8 @@ steps:
 
   - template: .\devops\templates\dotnet-package-pack.yaml
     parameters:
-      projPath: src/$(packageId)
-      projName: $(packageId)
+      projPath: src/Umbrella.Infrastructure.Firestore
+      projName: Umbrella.Infrastructure.Firestore
       MajorVersion: ${{ parameters.MajorVersion }}
       MinorVersion: ${{ parameters.MinorVersion }}
       buildNumber: $(Build.BuildId)
