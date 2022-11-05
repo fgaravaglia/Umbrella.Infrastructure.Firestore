@@ -53,7 +53,7 @@ steps:
       Authors: ${{ parameters.authors }}
       Company: ${{ parameters.company }}
       Copyright: ${{ parameters.copyright }}
-      #PackageId: ${{ parameters.projName }}
+      PackageId: ${{ parameters.projName }}
       VersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.0.0
       FileVersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.0.0
       InformationalVersion: ${{ parameters.buildNumber }}
