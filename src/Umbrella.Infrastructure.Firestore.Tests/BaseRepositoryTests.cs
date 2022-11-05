@@ -2,7 +2,7 @@ using Umbrella.Infrastructure.Firestore;
 
 namespace Umbrella.Infrastructure.Firestore.Tests
 {
-    public class TestEntity : IBaseFirestoreData
+    public class TestEntityDocument : IBaseFirestoreData
     {
         public string Id { get; private set; }
 
@@ -10,7 +10,7 @@ namespace Umbrella.Infrastructure.Firestore.Tests
         public DateTime CreatedOn { get; set; }
         public DateTime? LastUpdatedOn { get; set;}
 
-        public TestEntity()
+        public TestEntityDocument()
         {
             this.Id = "";
             this.Name = "";
@@ -38,7 +38,7 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             string collectionName = "TestEntity";
 
             //******* WHEN
-            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new BaseRepository<TestEntity>(projectId, collectionName, true));
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new BaseRepository<TestEntityDocument>(projectId, collectionName, true));
             Assert.That(ex.ParamName, Is.EqualTo("projectId"));
             Assert.Pass();
         }
@@ -51,7 +51,7 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             string collectionName = "";
 
             //******* WHEN
-            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new BaseRepository<TestEntity>(projectId, collectionName, true));
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => new BaseRepository<TestEntityDocument>(projectId, collectionName, true));
             Assert.That(ex.ParamName, Is.EqualTo("collectionName"));
             Assert.Pass();
         }
@@ -64,7 +64,9 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             string collectionName = "TestEntity";
 
             //******* WHEN
-            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => new BaseRepository<TestEntity>(projectId, collectionName, true));
+            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => new BaseRepository<TestEntityDocument>(projectId, collectionName, true));
+            Assert.That(ex.Message.StartsWith("The Application Default Credentials are not available.", true, System.Globalization.CultureInfo.InvariantCulture), 
+                        Is.EqualTo(true));
             Assert.Pass();
         }
     }
