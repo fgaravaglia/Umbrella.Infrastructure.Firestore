@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <PackageId>Umbrella.Infrastructure.Firestore</PackageId>
     <Company>Innova Solutions</Company>
     <Authors>FG</Authors>
     <Description>Library to provide a client for GCP Firestore</Description>
