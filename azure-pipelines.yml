@@ -74,22 +74,22 @@ steps:
       dotnet tool install --global dotnet-reportgenerator-globaltool
     displayName: "Install ReportGenerator tool"
 
-  # - task: SonarCloudPrepare@1
-  #   displayName: "Prepare analysis on SonarCloud"
-  #   inputs:
-  #     SonarCloud: "SonarQubeCloud"
-  #     organization: "fgaravaglia"
-  #     scannerMode: "MSBuild"
-  #     projectKey: "Umbrella.Infrastructure.Firestore"
-  #     projectName: "Umbrella.Infrastructure.Firestore"
-  #     projectVersion: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}"
-  #     extraProperties: |
-  #       # Additional properties that will be passed to the scanner,
-  #       # Put one key=value per line, example:
-  #       sonar.exclusions=**/obj/**,**/*.dll,**/*.Tests/**,**/*.Tests/**/*.cs
-  #       sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
-  #       sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/$(testReportFileName)
-  #   condition: eq(${{ parameters.SonarScanEnabled }}, true)
+  - task: SonarCloudPrepare@1
+    displayName: "Prepare analysis on SonarCloud"
+    inputs:
+      SonarCloud: "SonarCloud"
+      organization: "fgaravaglia"
+      scannerMode: "MSBuild"
+      projectKey: "Umbrella.Infrastructure.Firestore"
+      projectName: "Umbrella.Infrastructure.Firestore"
+      projectVersion: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}"
+      extraProperties: |
+        # Additional properties that will be passed to the scanner,
+        # Put one key=value per line, example:
+        sonar.exclusions=**/obj/**,**/*.dll,**/*.Tests/**,**/*.Tests/**/*.cs
+        sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/$(testReportFileName)
+    condition: eq(${{ parameters.SonarScanEnabled }}, true)
 
   - template: .\devops\templates\dotnet-package-pack.yaml
     parameters:
@@ -111,15 +111,15 @@ steps:
       projPath: src/Umbrella.Infrastructure.Firestore.Tests
       projName: Umbrella.Infrastructure.Firestore.Tests
 
-  # - task: SonarCloudAnalyze@1
-  #   displayName: "Run Sonar Cloud Analysis"
-  #   condition: eq(${{ parameters.SonarScanEnabled }}, true)
+  - task: SonarCloudAnalyze@1
+    displayName: "Run Sonar Cloud Analysis"
+    condition: eq(${{ parameters.SonarScanEnabled }}, true)
 
-  # - task: SonarCloudPublish@1
-  #   displayName: "Publish Sonar Cloud Analysis"
-  #   inputs:
-  #     pollingTimeoutSec: "300"
-  #   condition: eq(${{ parameters.SonarScanEnabled }}, true)
+  - task: SonarCloudPublish@1
+    displayName: "Publish Sonar Cloud Analysis"
+    inputs:
+      pollingTimeoutSec: "300"
+    condition: eq(${{ parameters.SonarScanEnabled }}, true)
 
   ############################## PUBLISH DROP #################################
   - task: PublishBuildArtifacts@1
