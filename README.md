@@ -15,4 +15,4 @@ To install it, use proper command:
 dotnet add package Umbrella.Infrastructure.Firestore 
 ```
 
-For more details about download, see [NuGet Web Site](https://www.nuget.org/)
+For more details about download, see [NuGet Web Site](https://www.nuget.org/packages/Umbrella.Infrastructure.Firestore/)
