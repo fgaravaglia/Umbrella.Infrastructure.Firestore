@@ -101,6 +101,22 @@ steps:
       MinorVersion: ${{ parameters.MinorVersion }}
       buildNumber: $(Build.BuildId)
 
+  - task: Assembly-Info-NetCore@3
+    displayName: $(packageId) - Set Info for test
+    inputs:
+      Path: "src"
+      FileNames: "**/*.csproj"
+      InsertAttributes: true
+      FileEncoding: auto
+      WriteBOM: false
+      Authors: ${{ parameters.authors }}
+      Company: ${{ parameters.company }}
+      Copyright: ${{ parameters.copyright }}
+      PackageId: "$(packageId)-develop"
+      VersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.0.0
+      FileVersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.0.0
+      InformationalVersion: ${{ parameters.buildNumber }}
+
   - template: .\devops\templates\dotnet-build.yaml
     parameters:
       projPath: src/Umbrella.Infrastructure.Firestore.Tests
