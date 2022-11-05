@@ -25,3 +25,11 @@ steps:
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: "$(Build.SourcesDirectory)/coverlet/reports/Cobertura.xml"
+
+  - task: DotNetCoreCLI@2
+    displayName: "dotnet test on ${{ parameters.projName }}"
+    inputs:
+      command: test
+      projects: "${{ parameters.projPath }}/${{ parameters.projName }}.csproj"
+      arguments: '--logger trx --configuration Debug --collect "Code coverage" -- RunConfiguration.DisableAppDomain=true'
+      testRunTitle: ${{ parameters.projName }}

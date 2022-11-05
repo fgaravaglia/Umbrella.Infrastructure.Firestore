@@ -89,6 +89,7 @@ steps:
         sonar.exclusions=**/obj/**,**/*.dll,**/*.Tests/**,**/*.Tests/**/*.cs
         sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
         sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/$(testReportFileName)
+        sonar.cs.vscoveragexml.reportsPaths=coverage.xml
     condition: eq(${{ parameters.SonarScanEnabled }}, true)
 
   - template: .\devops\templates\dotnet-package-pack.yaml
