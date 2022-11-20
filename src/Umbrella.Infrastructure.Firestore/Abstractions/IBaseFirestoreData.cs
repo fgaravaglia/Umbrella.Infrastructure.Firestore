@@ -1,6 +1,6 @@
 using System;
 
-namespace Umbrella.Infrastructure.Firestore
+namespace Umbrella.Infrastructure.Firestore.Abstractions
 {
     /// <summary>
     /// Represents the base data that will exists on all records.

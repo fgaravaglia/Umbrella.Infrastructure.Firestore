@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Google.Cloud.Firestore;
 using Microsoft.Extensions.Logging;
+using Umbrella.Infrastructure.Firestore.Abstractions;
 
 namespace Umbrella.Infrastructure.Firestore
 {

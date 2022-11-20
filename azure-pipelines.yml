@@ -2,6 +2,7 @@ trigger:
   branches:
     include:
       - main
+      - development
     exclude:
       - release-candidate
       - release-1.0
@@ -27,7 +28,7 @@ parameters:
     default: 1
   - name: MinorVersion
     displayName: "Minor Version"
-    default: 0
+    default: 1
   - name: authors
     displayName: "Names of authors of the target package"
     default: "FG"

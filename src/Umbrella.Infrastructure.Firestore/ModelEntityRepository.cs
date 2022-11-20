@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Umbrella.Infrastructure.Firestore.Abstractions;
 
 namespace Umbrella.Infrastructure.Firestore
 {
@@ -11,8 +12,9 @@ namespace Umbrella.Infrastructure.Firestore
     /// </summary>
     /// <typeparam name="T">DTO that map the colletion in your application</typeparam>
     /// <typeparam name="Tdoc">Document representation of DTO on Firestore</typeparam>
-    public class ModelEntityRepository<T, Tdoc> : IModelEntityRepository<T>
+    public abstract class ModelEntityRepository<T, Tdoc> : IModelEntityRepository<T>
         where Tdoc : IBaseFirestoreData
+        where T : class
     {
         protected readonly ILogger _Logger;
         protected readonly BaseRepository<Tdoc> _Repo;
@@ -49,12 +51,20 @@ namespace Umbrella.Infrastructure.Firestore
             this._Repo = new BaseRepository<Tdoc>(projectId, collectionName, autoGenerateId);
         }
 
+        /// <summary>
+        /// Gets the complete list of objetcs
+        /// </summary>
+        /// <returns></returns>
         public virtual IEnumerable<T> GetAll()
         {
             var docs = this._Repo.GetAllAsync().Result as List<Tdoc>;
             return docs.Select(x => this._Mapper.FromFirestoreDoc(x)).ToList();
         }
-
+        /// <summary>
+        ///  Gets the entity b its Id
+        /// </summary>
+        /// <param name="keyValue"></param>
+        /// <returns></returns>
         public virtual T GetById(string keyValue)
         {
             var doc = this._Repo.GetAsync(FirestoreDataReference.AsBaseFirestoreData(keyValue)).Result;
@@ -63,7 +73,11 @@ namespace Umbrella.Infrastructure.Firestore
             else 
                 return default(T);
         }
-
+        /// <summary>
+        /// SAves the entity. It creates a new one or updates it
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns>the entity Id</returns>
         public virtual string Save(T dto)
         {
             if(dto == null)
@@ -81,7 +95,10 @@ namespace Umbrella.Infrastructure.Firestore
             this._Logger.LogDebug($"Document {matchDoc.Id} of type {typeof(T).FullName} succesfully persisted on Firestore");
             return matchDoc.Id;
         }
-
+        /// <summary>
+        /// Replaces the collection with the given list
+        /// </summary>
+        /// <param name="dtos"></param>
         public virtual void SaveAll(IEnumerable<T> dtos)
         {
             dtos.ToList().ForEach(m => this.Save(m));

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 
-namespace Umbrella.Infrastructure.Firestore
+namespace Umbrella.Infrastructure.Firestore.Abstractions
 {
     /// <summary>
     /// Abstraction to Define generic behavior for all repsority stuff. Usefull for external assemblies
     /// </summary>
     /// <typeparam name="T">entity type to sstore</typeparam>
-    public interface IModelEntityRepository<T>
+    public interface IModelEntityRepository<T> where T : class
     {
         /// <summary>
         /// Gets the complete list of objetcs

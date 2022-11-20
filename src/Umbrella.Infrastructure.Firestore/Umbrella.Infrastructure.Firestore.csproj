@@ -8,7 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Cloud.Firestore" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -16,20 +17,20 @@
     <Authors>FG</Authors>
     <Description>Library to provide a client for GCP Firestore, with Repository Pattern implementation</Description>
     <Copyright>FG 2022 - 2023</Copyright>
-    <Version>1.0.0.0</Version>
-    <VersionNumber>1.0.0.0</VersionNumber>
+    <Version>1.1.0.0</Version>
+    <VersionNumber>1.1.0.0</VersionNumber>
     <PackageProjectUrl>https://github.com/fgaravaglia/Umbrella.Infrastructure.Firestore</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/fgaravaglia/Umbrella.Infrastructure.Firestore</RepositoryUrl>
     <PackageReleaseNotes>
-  - First release of the package
+  - Improvied DI management at Startup
     </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\README.md" Pack="true" PackagePath=""/>
-    <None Include="..\..\LICENSE" Pack="true" PackagePath=""/>
+    <None Include="..\..\README.md" Pack="true" PackagePath="" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>

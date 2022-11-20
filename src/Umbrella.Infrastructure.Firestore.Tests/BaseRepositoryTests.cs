@@ -1,4 +1,4 @@
-using Umbrella.Infrastructure.Firestore;
+using Umbrella.Infrastructure.Firestore.Abstractions;
 
 namespace Umbrella.Infrastructure.Firestore.Tests
 {

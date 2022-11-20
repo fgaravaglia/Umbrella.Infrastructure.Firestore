@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Google.Cloud.Firestore;
 
-namespace Umbrella.Infrastructure.Firestore
+namespace Umbrella.Infrastructure.Firestore.Abstractions
 {
     /// <summary>
     /// Represents the behaviour ofr a repository of a given data type / collection
