@@ -75,23 +75,23 @@ stages:
 
           - template: .\devops\templates\dotnet-tool-install-coverlet.yaml
 
-          - task: SonarCloudPrepare@1
-            displayName: "Prepare analysis on SonarCloud"
-            inputs:
-              SonarCloud: "SonarCloud"
-              organization: "fgaravaglia"
-              scannerMode: "MSBuild"
-              projectKey: $(packageId)
-              projectName: $(packageId)
-              projectVersion: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}"
-              extraProperties: |
-                # Additional properties that will be passed to the scanner,
-                # Put one key=value per line, example:
-                sonar.exclusions=**/obj/**,**/*.dll,**/*.Tests/**,**/*.Tests/**/*.cs
-                sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
-                sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/$(testReportFileName)
-                sonar.cs.vscoveragexml.reportsPaths=coverage.xml
-            condition: eq(${{ parameters.SonarScanEnabled }}, true)
+          # - task: SonarCloudPrepare@1
+          #   displayName: "Prepare analysis on SonarCloud"
+          #   inputs:
+          #     SonarCloud: "SonarCloud"
+          #     organization: "fgaravaglia"
+          #     scannerMode: "MSBuild"
+          #     projectKey: $(packageId)
+          #     projectName: $(packageId)
+          #     projectVersion: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}"
+          #     extraProperties: |
+          #       # Additional properties that will be passed to the scanner,
+          #       # Put one key=value per line, example:
+          #       sonar.exclusions=**/obj/**,**/*.dll,**/*.Tests/**,**/*.Tests/**/*.cs
+          #       sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+          #       sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/$(testReportFileName)
+          #       sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+          #   condition: eq(${{ parameters.SonarScanEnabled }}, true)
 
           - task: Assembly-Info-NetCore@2
             displayName: Set Assembly Info
@@ -125,6 +125,45 @@ stages:
           #     projPath: src/Umbrella.Infrastructure.Firestore.Tests
           #     projName: Umbrella.Infrastructure.Firestore.Tests
 
+          # - task: SonarCloudAnalyze@1
+          #   displayName: "Run Sonar Cloud Analysis"
+          #   condition: eq(${{ parameters.SonarScanEnabled }}, true)
+
+          # - task: SonarCloudPublish@1
+          #   displayName: "Publish Sonar Cloud Analysis"
+          #   inputs:
+          #     pollingTimeoutSec: "300"
+          #   condition: eq(${{ parameters.SonarScanEnabled }}, true)
+
+          ############################## PUBLISH DROP #################################
+          - task: PublishBuildArtifacts@1
+            displayName: publish artifacts
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "drop"
+              publishLocation: "Container"
+
+      - job: SonarScan
+        dependsOn: CI
+        steps:
+          - task: SonarCloudPrepare@1
+            displayName: "Prepare analysis on SonarCloud"
+            inputs:
+              SonarCloud: "SonarCloud"
+              organization: "fgaravaglia"
+              scannerMode: "MSBuild"
+              projectKey: $(packageId)
+              projectName: $(packageId)
+              projectVersion: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}"
+              extraProperties: |
+                # Additional properties that will be passed to the scanner,
+                # Put one key=value per line, example:
+                sonar.exclusions=**/obj/**,**/*.dll,**/*.Tests/**,**/*.Tests/**/*.cs
+                sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+                sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/$(testReportFileName)
+                sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+            condition: eq(${{ parameters.SonarScanEnabled }}, true)
+
           - task: SonarCloudAnalyze@1
             displayName: "Run Sonar Cloud Analysis"
             condition: eq(${{ parameters.SonarScanEnabled }}, true)
@@ -134,14 +173,6 @@ stages:
             inputs:
               pollingTimeoutSec: "300"
             condition: eq(${{ parameters.SonarScanEnabled }}, true)
-
-          ############################## PUBLISH DROP #################################
-          - task: PublishBuildArtifacts@1
-            displayName: publish artifacts
-            inputs:
-              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
-              ArtifactName: "drop"
-              publishLocation: "Container"
 
   - stage: PackAndPush
     dependsOn: Build

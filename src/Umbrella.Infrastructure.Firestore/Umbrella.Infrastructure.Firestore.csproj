@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <PropertyGroup>
+    <PackageId>Umbrella.Infrastructure.Firestore</PackageId>
     <Company>Innova Solutions</Company>
     <Authors>FG</Authors>
     <Description>Library to provide a client for GCP Firestore, with Repository Pattern implementation</Description>
@@ -26,6 +27,8 @@
     <RepositoryUrl>https://github.com/fgaravaglia/Umbrella.Infrastructure.Firestore</RepositoryUrl>
     <PackageReleaseNotes>
   - Improvied DI management at Startup
+  - Improved concept segregation
+  - Added Test Project to run locally
     </PackageReleaseNotes>
   </PropertyGroup>
 
