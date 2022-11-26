@@ -138,7 +138,7 @@ stages:
               ArtifactName: "drop"
               publishLocation: "Container"
 
-  - stage: Pack&Push
+  - stage: PackAndPush
     dependsOn: Build
     jobs:
       - job: PushImage
