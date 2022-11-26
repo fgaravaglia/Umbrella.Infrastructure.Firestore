@@ -102,6 +102,18 @@ steps:
       MinorVersion: ${{ parameters.MinorVersion }}
       buildNumber: $(Build.BuildId)
 
+  ############################## TEST #################################
+  - template: .\devops\templates\dotnet-build.yaml
+    parameters:
+      projPath: src/Umbrella.Infrastructure.Firestore.Tests
+      projName: Umbrella.Infrastructure.Firestore.Tests
+      publishRequired: false
+
+  - template: .\devops\templates\dotnet-test.yaml
+    parameters:
+      projPath: src/Umbrella.Infrastructure.Firestore.Tests
+      projName: Umbrella.Infrastructure.Firestore.Tests
+
   # - task: Assembly-Info-NetCore@3
   #   displayName: $(packageId) - Set Info for test
   #   inputs:
