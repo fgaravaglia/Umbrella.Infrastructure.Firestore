@@ -104,15 +104,16 @@ stages:
               FileVersionNumber: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId).0"
               InformationalVersion: "$(Build.BuildNumber)"
 
-          - template: .\devops\templates\dotnet-build.yaml
-            parameters:
-              projPath: src/Umbrella.Infrastructure.Firestore
-              projName: Umbrella.Infrastructure.Firestore
+          # - template: .\devops\templates\dotnet-build.yaml
+          #   parameters:
+          #     projPath: src/Umbrella.Infrastructure.Firestore
+          #     projName: Umbrella.Infrastructure.Firestore
 
-          - template: .\devops\templates\dotnet-test.yaml
+          - template: .\devops\templates\dotnet-build.yaml
             parameters:
               projPath: src/Umbrella.Infrastructure.Firestore.Tests
               projName: Umbrella.Infrastructure.Firestore.Tests
+              publishRequired: false
 
           ############################## TEST #################################
           - template: .\devops\templates\dotnet-test.yaml
