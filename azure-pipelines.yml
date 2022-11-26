@@ -112,20 +112,18 @@ stages:
             parameters:
               projPath: src/Umbrella.Infrastructure.Firestore
               projName: Umbrella.Infrastructure.Firestore
-            condition: eq(${{ parameters.TestExecutionEnabled }}, false)
 
-          - template: .\devops\templates\dotnet-build.yaml
-            parameters:
-              projPath: src/Umbrella.Infrastructure.Firestore.Tests
-              projName: Umbrella.Infrastructure.Firestore.Tests
-              publishRequired: false
-            condition: eq(${{ parameters.TestExecutionEnabled }}, false)
+          # - template: .\devops\templates\dotnet-build.yaml
+          #   parameters:
+          #     projPath: src/Umbrella.Infrastructure.Firestore.Tests
+          #     projName: Umbrella.Infrastructure.Firestore.Tests
+          #     publishRequired: false
 
-          ############################## TEST #################################
-          - template: .\devops\templates\dotnet-test.yaml
-            parameters:
-              projPath: src/Umbrella.Infrastructure.Firestore.Tests
-              projName: Umbrella.Infrastructure.Firestore.Tests
+          # ############################# TEST #################################
+          # - template: .\devops\templates\dotnet-test.yaml
+          #   parameters:
+          #     projPath: src/Umbrella.Infrastructure.Firestore.Tests
+          #     projName: Umbrella.Infrastructure.Firestore.Tests
 
           - task: SonarCloudAnalyze@1
             displayName: "Run Sonar Cloud Analysis"
