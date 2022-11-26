@@ -42,6 +42,10 @@ parameters:
     displayName: "Enable Sonar Scan"
     type: boolean
     default: True
+  - name: TestExecutionEnabled
+    displayName: "Enable Test Execution"
+    type: boolean
+    default: False
   - name: PublishPackage
     displayName: "Publish Package to Nuget.Org"
     type: boolean
@@ -104,16 +108,18 @@ stages:
               FileVersionNumber: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId).0"
               InformationalVersion: "$(Build.BuildNumber)"
 
-          # - template: .\devops\templates\dotnet-build.yaml
-          #   parameters:
-          #     projPath: src/Umbrella.Infrastructure.Firestore
-          #     projName: Umbrella.Infrastructure.Firestore
+          - template: .\devops\templates\dotnet-build.yaml
+            parameters:
+              projPath: src/Umbrella.Infrastructure.Firestore
+              projName: Umbrella.Infrastructure.Firestore
+            condition: eq(${{ parameters.TestExecutionEnabled }}, false)
 
           - template: .\devops\templates\dotnet-build.yaml
             parameters:
               projPath: src/Umbrella.Infrastructure.Firestore.Tests
               projName: Umbrella.Infrastructure.Firestore.Tests
               publishRequired: false
+            condition: eq(${{ parameters.TestExecutionEnabled }}, false)
 
           ############################## TEST #################################
           - template: .\devops\templates\dotnet-test.yaml
