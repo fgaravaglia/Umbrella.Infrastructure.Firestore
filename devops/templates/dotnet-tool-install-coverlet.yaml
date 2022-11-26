@@ -1,0 +1,5 @@
+steps:
+  - script: |
+      dotnet tool install --global dotnet-reportgenerator-globaltool
+      dotnet tool install --global coverlet.console
+    displayName: "Install Report Generator tool"

@@ -57,116 +57,122 @@ variables:
   nugetVersion: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId)
   testReportFileName: cobertura.xml
 
-steps:
-  ##### use the right version of .Net core
-  - task: UseDotNet@2
-    displayName: Use .NET target version
-    inputs:
-      packageType: "sdk"
-      version: $(targetFramework)
+stages:
+  - stage: Build
+    jobs:
+      - job: CI
+        steps:
+          #### use the right version of .Net core
+          - task: UseDotNet@2
+            displayName: Use .NET CORE target version
+            inputs:
+              packageType: "sdk"
+              version: "6.x"
 
-  - task: NuGetToolInstaller@1
-    displayName: "Use Nuget.exe"
-    inputs:
-      checkLatest: true
+          - template: .\devops\templates\dotnet-tool-install-coverlet.yaml
 
-  - script: |
-      echo "Build ID      => $(Build.BuildId)"
-      echo "Build Number  => $(Build.BuildNumber)"
-      dotnet tool install --global dotnet-reportgenerator-globaltool
-    displayName: "Install ReportGenerator tool"
+          - task: SonarCloudPrepare@1
+            displayName: "Prepare analysis on SonarCloud"
+            inputs:
+              SonarCloud: "SonarCloud"
+              organization: "fgaravaglia"
+              scannerMode: "MSBuild"
+              projectKey: $(packageId)
+              projectName: $(packageId)
+              projectVersion: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}"
+              extraProperties: |
+                # Additional properties that will be passed to the scanner,
+                # Put one key=value per line, example:
+                sonar.exclusions=**/obj/**,**/*.dll,**/*.Tests/**,**/*.Tests/**/*.cs
+                sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+                sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/$(testReportFileName)
+                sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+            condition: eq(${{ parameters.SonarScanEnabled }}, true)
 
-  - task: SonarCloudPrepare@1
-    displayName: "Prepare analysis on SonarCloud"
-    inputs:
-      SonarCloud: "SonarCloud"
-      organization: "fgaravaglia"
-      scannerMode: "MSBuild"
-      projectKey: $(packageId)
-      projectName: $(packageId)
-      projectVersion: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}"
-      extraProperties: |
-        # Additional properties that will be passed to the scanner,
-        # Put one key=value per line, example:
-        sonar.exclusions=**/obj/**,**/*.dll,**/*.Tests/**,**/*.Tests/**/*.cs
-        sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
-        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/$(testReportFileName)
-        sonar.cs.vscoveragexml.reportsPaths=coverage.xml
-    condition: eq(${{ parameters.SonarScanEnabled }}, true)
+          - task: Assembly-Info-NetCore@2
+            displayName: Set Assembly Info
+            inputs:
+              Path: "$(Build.SourcesDirectory)"
+              FileNames: "**/*.csproj"
+              InsertAttributes: true
+              FileEncoding: "auto"
+              WriteBOM: false
+              Authors: "${{ parameters.authors }}"
+              Company: "${{ parameters.company }}"
+              Copyright: "${{ parameters.copyright }}"
+              VersionNumber: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId).0"
+              FileVersionNumber: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId).0"
+              InformationalVersion: "$(Build.BuildNumber)"
 
-  - template: .\devops\templates\dotnet-package-pack.yaml
-    parameters:
-      projPath: src/Umbrella.Infrastructure.Firestore
-      projName: Umbrella.Infrastructure.Firestore
-      MajorVersion: ${{ parameters.MajorVersion }}
-      MinorVersion: ${{ parameters.MinorVersion }}
-      buildNumber: $(Build.BuildId)
+          - template: .\devops\templates\dotnet-build.yaml
+            parameters:
+              projPath: src/Umbrella.Infrastructure.Firestore
+              projName: Umbrella.Infrastructure.Firestore
 
-  ############################## TEST #################################
-  - template: .\devops\templates\dotnet-build.yaml
-    parameters:
-      projPath: src/Umbrella.Infrastructure.Firestore.Tests
-      projName: Umbrella.Infrastructure.Firestore.Tests
-      publishRequired: false
+          - template: .\devops\templates\dotnet-test.yaml
+            parameters:
+              projPath: src/Umbrella.Infrastructure.Firestore.Tests
+              projName: Umbrella.Infrastructure.Firestore.Tests
 
-  - template: .\devops\templates\dotnet-test.yaml
-    parameters:
-      projPath: src/Umbrella.Infrastructure.Firestore.Tests
-      projName: Umbrella.Infrastructure.Firestore.Tests
+          ############################## TEST #################################
+          - template: .\devops\templates\dotnet-test.yaml
+            parameters:
+              projPath: src/Umbrella.Infrastructure.Firestore.Tests
+              projName: Umbrella.Infrastructure.Firestore.Tests
 
-  # - task: Assembly-Info-NetCore@3
-  #   displayName: $(packageId) - Set Info for test
-  #   inputs:
-  #     Path: "src"
-  #     FileNames: "**/*.csproj"
-  #     InsertAttributes: true
-  #     FileEncoding: auto
-  #     WriteBOM: false
-  #     Authors: ${{ parameters.authors }}
-  #     Company: ${{ parameters.company }}
-  #     Copyright: ${{ parameters.copyright }}
-  #     PackageId: "$(packageId)-develop"
-  #     VersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.0.0
-  #     FileVersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.0.0
-  #     InformationalVersion: $(Build.BuildId)
+          - task: SonarCloudAnalyze@1
+            displayName: "Run Sonar Cloud Analysis"
+            condition: eq(${{ parameters.SonarScanEnabled }}, true)
 
-  # - template: .\devops\templates\dotnet-build.yaml
-  #   parameters:
-  #     projPath: src/Umbrella.Infrastructure.Firestore.Tests
-  #     projName: Umbrella.Infrastructure.Firestore.Tests
-  #     publishRequired: false
+          - task: SonarCloudPublish@1
+            displayName: "Publish Sonar Cloud Analysis"
+            inputs:
+              pollingTimeoutSec: "300"
+            condition: eq(${{ parameters.SonarScanEnabled }}, true)
 
-  # ############################## TEST #################################
-  # - template: .\devops\templates\dotnet-test.yaml
-  #   parameters:
-  #     projPath: src/Umbrella.Infrastructure.Firestore.Tests
-  #     projName: Umbrella.Infrastructure.Firestore.Tests
+          ############################## PUBLISH DROP #################################
+          - task: PublishBuildArtifacts@1
+            displayName: publish artifacts
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "drop"
+              publishLocation: "Container"
 
-  - task: SonarCloudAnalyze@1
-    displayName: "Run Sonar Cloud Analysis"
-    condition: eq(${{ parameters.SonarScanEnabled }}, true)
+  - stage: Pack&Push
+    dependsOn: Build
+    jobs:
+      - job: PushImage
+        steps:
+          - task: Assembly-Info-NetCore@2
+            displayName: Set Assembly Info
+            inputs:
+              Path: "$(Build.SourcesDirectory)"
+              FileNames: "**/*.csproj"
+              InsertAttributes: true
+              FileEncoding: "auto"
+              WriteBOM: false
+              Authors: "${{ parameters.authors }}"
+              Company: "${{ parameters.company }}"
+              Copyright: "${{ parameters.copyright }}"
+              VersionNumber: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId).0"
+              FileVersionNumber: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId).0"
+              InformationalVersion: "$(Build.BuildNumber)"
 
-  - task: SonarCloudPublish@1
-    displayName: "Publish Sonar Cloud Analysis"
-    inputs:
-      pollingTimeoutSec: "300"
-    condition: eq(${{ parameters.SonarScanEnabled }}, true)
+          - template: .\devops\templates\dotnet-package-pack.yaml
+            parameters:
+              projPath: src/Umbrella.Infrastructure.Firestore
+              projName: Umbrella.Infrastructure.Firestore
+              MajorVersion: ${{ parameters.MajorVersion }}
+              MinorVersion: ${{ parameters.MinorVersion }}
+              buildNumber: $(Build.BuildId)
 
-  ############################## PUBLISH DROP #################################
-  - task: PublishBuildArtifacts@1
-    displayName: publish artifacts
-    inputs:
-      PathtoPublish: "$(Build.ArtifactStagingDirectory)"
-      ArtifactName: "drop"
-      publishLocation: "Container"
-
-  - task: DotNetCoreCLI@2
-    displayName: Push to Nuget.org
-    inputs:
-      command: "custom"
-      custom: nuget
-      arguments: >
-        push $(Build.ArtifactStagingDirectory)/$(packageId).*.nupkg
-        -s https://api.nuget.org/v3/index.json
-        -k ${{ parameters.NugetApiKey }}
-    condition: eq(${{ parameters.PublishPackage }}, true)
+          - task: DotNetCoreCLI@2
+            displayName: Push to Nuget.org
+            inputs:
+              command: "custom"
+              custom: nuget
+              arguments: >
+                push $(Build.ArtifactStagingDirectory)/$(packageId).*.nupkg
+                -s https://api.nuget.org/v3/index.json
+                -k ${{ parameters.NugetApiKey }}
+            condition: eq(${{ parameters.PublishPackage }}, true)
