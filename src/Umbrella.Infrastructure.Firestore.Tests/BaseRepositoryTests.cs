@@ -36,59 +36,9 @@ namespace Umbrella.Infrastructure.Firestore.Tests
         }
     }
 
-    public class BaseRepositoryTests
+    public class BaseRepositoryTests : BaseFirestoreTests<TestEntityDocument>
     {
-        string _ProjectId;
-        string _CredentialFilePath;
-        List<IBaseFirestoreData> _persistedEntities;
-
-        [SetUp]
-        public void Setup()
-        {
-            this._ProjectId = "umbrella-dev-369813";
-            this._CredentialFilePath = @"C:\Users\francesco\OneDrive\Coding\umbrella-dev-azuredevops.json";
-            this._persistedEntities = new List<IBaseFirestoreData>();
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            if(!this._persistedEntities.Any())
-             return;
-            
-            var repo = InstanceRepostiory();
-            foreach(var data in this._persistedEntities)
-            {
-                try
-                {
-                    repo.DeleteAsync(data).Wait();
-                    Console.WriteLine($"[INF] Entity ${data.GetType()} with ID {data.Id} succesfully deleted");
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine($"[ERR] Unexpected error during ${nameof(BaseRepositoryTests)}.TearDown");
-                    Console.WriteLine(ex.Message);
-                }
-
-            }
-        }
-
-        #region Private Methods
-        BaseRepository<TestEntityDocument> InstanceRepostiory(string collectionName = "TestEntity", bool autogenerateId = false)
-        {
-            var variableValue = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS");
-            if (String.IsNullOrEmpty(variableValue))
-                Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", Path.GetFullPath(this._CredentialFilePath));
-            return new BaseRepository<TestEntityDocument>(this._ProjectId, collectionName, autogenerateId);
-        }
-
-        static void AssertDatesAreEquals(DateTime actualDate, DateTime expectedData, string message = "")
-        {
-            Assert.That(actualDate.ToString("YYYY-MM-dd HH:mm:ss fff", CultureInfo.InvariantCulture),
-                        Is.EqualTo(expectedData.ToString("YYYY-MM-dd HH:mm:ss fff", CultureInfo.InvariantCulture)),
-                        message);
-        }
-        #endregion
+        public override string CollectionName { get{ return "TestEntity"; } }
 
         [Test]
         public void Constructor_ThrowEx_IfProjectIdIsNull()

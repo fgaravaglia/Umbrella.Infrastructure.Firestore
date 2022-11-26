@@ -45,6 +45,7 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             this._Mapper = mapper.Object;
         }
 
+        #region Tests on Constructor
         [Test]
         public void Constructor_ThrowEx_IfProjectIdIsNull()
         {
@@ -195,5 +196,8 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             Assert.That(ex.Message, Is.EqualTo("MIssing Environment Variable: GOOGLE_APPLICATION_CREDENTIALS"));
             Assert.Pass();
         }
+    
+        #endregion
+        
     }
 }

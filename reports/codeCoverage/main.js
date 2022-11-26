@@ -223,7 +223,7 @@ var assemblies = [
     "classes": [
       { "name": "Umbrella.Infrastructure.Firestore.BaseRepository<T>", "rp": "Umbrella.Infrastructure.Firestore_BaseRepository_1.html", "cl": 44, "ucl": 11, "cal": 55, "tl": 129, "ct": "LineCoverage", "cbm": "-", "cb": 14, "tb": 20, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "Umbrella.Infrastructure.Firestore.Extensions.ServiceCollectionExtensions", "rp": "Umbrella.Infrastructure.Firestore_ServiceCollectionExtensions.html", "cl": 13, "ucl": 1, "cal": 14, "tl": 41, "ct": "LineCoverage", "cbm": "-", "cb": 11, "tb": 12, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
-      { "name": "Umbrella.Infrastructure.Firestore.ModelEntityRepository<T1, T2>", "rp": "Umbrella.Infrastructure.Firestore_ModelEntityRepository_2.html", "cl": 14, "ucl": 30, "cal": 44, "tl": 123, "ct": "LineCoverage", "cbm": "-", "cb": 11, "tb": 22, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "Umbrella.Infrastructure.Firestore.ModelEntityRepository<T1, T2>", "rp": "Umbrella.Infrastructure.Firestore_ModelEntityRepository_2.html", "cl": 15, "ucl": 29, "cal": 44, "tl": 123, "ct": "LineCoverage", "cbm": "-", "cb": 12, "tb": 22, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
     ]},
 ];
 

@@ -24,3 +24,6 @@ For more details about download, see [NuGet Web Site](https://www.nuget.org/pack
 <b>Test Coverage</b>
 You find test coverage report under _reports\codeCoverage_
 TO run it locally, use the script: _scripts\runTestCoverage.bat_
+
+remember to create a proper json file for credential to access GCP project.
+please see class _src\Umbrella.Infrastructure.Firestore.Tests\CredentialManager.cs_
