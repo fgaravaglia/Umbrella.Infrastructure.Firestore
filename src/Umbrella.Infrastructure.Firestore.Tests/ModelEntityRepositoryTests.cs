@@ -169,5 +169,31 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             Assert.That(ex.ParamName, Is.EqualTo("mapper"));
             Assert.Pass();
         }
+
+        [Test]
+        public void Constructor_ThrowEx_IfGoogleAppCredentialVariableIsNull()
+        {
+            //******* GIVEN
+            string projectId = "projectId";
+            string collectionName = "TestEntity";
+            string dotnetEnv = "localhost";
+            bool autoGenerateId = true;
+            Func<ModelEntityRepository<TestEntity, TestEntityDocument>> factory = () =>
+            {
+                return new TestEntityRepository(
+                                                _Logger,
+                                                projectId,
+                                                dotnetEnv,
+                                                autoGenerateId,
+                                                collectionName,
+                                                this._Mapper);
+            };
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "");
+
+            //******* WHEN
+            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => factory.Invoke());
+            Assert.That(ex.Message, Is.EqualTo("MIssing Environment Variable: GOOGLE_APPLICATION_CREDENTIALS"));
+            Assert.Pass();
+        }
     }
 }

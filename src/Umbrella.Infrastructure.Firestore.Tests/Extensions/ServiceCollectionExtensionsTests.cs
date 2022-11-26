@@ -64,11 +64,12 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Extensions
             //******* GIVEN
             IServiceCollection services = null;
             string environment = "localhost";
+            string path = @"C:\Temp\credentials.json";
 
             //******* WHEN
             TestDelegate testCode = () =>
             {
-                services.AddRepository<IEntityService, TestFirestoreService, TestEntity>(null, environment);
+                services.AddRepository<IEntityService, TestFirestoreService, TestEntity>(null, environment, path);
             };
 
             //******* ASSERT
@@ -83,11 +84,12 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Extensions
             //******* GIVEN
             IServiceCollection services = new ServiceCollection();
             string environmentName = "";
+            string path = @"C:\Temp\credentials.json";
 
             //******* WHEN
             TestDelegate testCode = () =>
             {
-                services.AddRepository<IEntityService, TestFirestoreService, TestEntity>(null, environmentName);
+                services.AddRepository<IEntityService, TestFirestoreService, TestEntity>(null, environmentName, path);
             };
 
             //******* ASSERT
@@ -103,11 +105,12 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Extensions
             IServiceCollection services = new ServiceCollection();
             string environmentName = "localhost";
             Func<IServiceProvider, TestFirestoreService> instanceFactory = null;
+            string path = @"C:\Temp\credentials.json";
 
             //******* WHEN
             TestDelegate testCode = () =>
             {
-                services.AddRepository<IEntityService, TestFirestoreService, TestEntity>(instanceFactory, environmentName);
+                services.AddRepository<IEntityService, TestFirestoreService, TestEntity>(instanceFactory, environmentName, path);
             };
 
             //******* ASSERT
@@ -117,11 +120,35 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Extensions
         }
 
         [Test]
-        public void AddRepository_RegistersTheImplementation()
+        public void AddRepository_ThrowEx_IfCredentialsFilePathIsNull_InLocalhost()
         {
             //******* GIVEN
             IServiceCollection services = new ServiceCollection();
             string environmentName = "localhost";
+            Func<IServiceProvider, TestFirestoreService> instanceFactory = x =>
+            {
+                return new TestFirestoreService(this._Logger, "my-gcp-proj", environmentName, true, "my-collection", this._Mapper);
+            };
+            string path = @"";
+
+            //******* WHEN
+            TestDelegate testCode = () =>
+            {
+                services.AddRepository<IEntityService, TestFirestoreService, TestEntity>(instanceFactory, environmentName, path);
+            };
+
+            //******* ASSERT
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(testCode);
+            Assert.That(ex.ParamName, Is.EqualTo("jsonCredentialsFilePath"));
+            Assert.Pass();
+        }
+
+        [Test]
+        public void AddRepository_RegistersTheImplementation()
+        {
+            //******* GIVEN
+            IServiceCollection services = new ServiceCollection();
+            string environmentName = "dev";
             Func<IServiceProvider, TestFirestoreService> instanceFactory = x =>
             {
                 return new TestFirestoreService(this._Logger, "my-gcp-proj", environmentName, true, "my-collection", this._Mapper);
@@ -135,6 +162,31 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Extensions
             Assert.False(provider == null, "Expected not null provider");
             var service = provider.GetService<IEntityService>();
             Assert.False(service == null, "Expected not null service");
+            Assert.Pass();
+        }
+
+        [Test]
+        public void AddRepository_RegistersTheImplementation_And_EnvVariable_ForLocalhost()
+        {
+            //******* GIVEN
+            IServiceCollection services = new ServiceCollection();
+            string environmentName = "localhost";
+            Func<IServiceProvider, TestFirestoreService> instanceFactory = x =>
+            {
+                return new TestFirestoreService(this._Logger, "my-gcp-proj", environmentName, true, "my-collection", this._Mapper);
+            };
+            string path = @"C:\Temp\credentials.json";
+
+            //******* WHEN
+            services.AddRepository<IEntityService, TestFirestoreService, TestEntity>(instanceFactory, environmentName, path);
+
+            //******* ASSERT
+            var provider = services.BuildServiceProvider();
+            Assert.False(provider == null, "Expected not null provider");
+            var service = provider.GetService<IEntityService>();
+            Assert.False(service == null, "Expected not null service");
+            var variableValue = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS");
+            Assert.False(string.IsNullOrEmpty(variableValue));
             Assert.Pass();
         }
     }

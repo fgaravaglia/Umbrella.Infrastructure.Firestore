@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Umbrella.Infrastructure.Firestore.Abstractions
 {
@@ -33,6 +34,7 @@ namespace Umbrella.Infrastructure.Firestore.Abstractions
         void SetDocumentId(string id);
     }
 
+    [ExcludeFromCodeCoverage]
     public class FirestoreDataReference : IBaseFirestoreData
     {
         public string Id {get; private set;}

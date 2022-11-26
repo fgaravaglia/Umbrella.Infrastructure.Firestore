@@ -17,3 +17,10 @@ dotnet add package Umbrella.Infrastructure.Firestore
 ```
 
 For more details about download, see [NuGet Web Site](https://www.nuget.org/packages/Umbrella.Infrastructure.Firestore/)
+
+<b>Branch Develop</b>
+[![Build Status](https://garaproject.visualstudio.com/UmbrellaFramework/_apis/build/status/Umbrella.Infrastructure.Firestore?branchName=develop)](https://garaproject.visualstudio.com/UmbrellaFramework/_build/latest?definitionId=73&branchName=develop)
+
+<b>Test Coverage</b>
+You find test coverage report under _reports\codeCoverage_
+TO run it locally, use the script: _scripts\runTestCoverage.bat_

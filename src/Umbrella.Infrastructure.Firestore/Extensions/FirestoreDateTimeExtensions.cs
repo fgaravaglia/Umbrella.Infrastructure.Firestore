@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Umbrella.Infrastructure.Firestore.Extensions
-{ 
+{
     /// <summary>
     /// Extensions for datetime Management
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class FirestoreDateTimeExtensions
     {
         /// <summary>

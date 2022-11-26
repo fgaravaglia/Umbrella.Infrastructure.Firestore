@@ -1,9 +1,11 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Google.Cloud.Firestore;
 
 namespace Umbrella.Infrastructure.Firestore
 {
+    [ExcludeFromCodeCoverage]
     [FirestoreData]
     public class FirestoreKeyValuePair
     {
