@@ -11,8 +11,7 @@ namespace Umbrella.Infrastructure.Firestore.Abstractions
         /// <summary>
         /// Gets the Id on document
         /// </summary>
-         string Id { get; }
-
+        string Id { get; }
         /// <summary>
         /// Gets the name on document
         /// </summary>

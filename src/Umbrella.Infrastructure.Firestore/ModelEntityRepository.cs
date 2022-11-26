@@ -17,7 +17,7 @@ namespace Umbrella.Infrastructure.Firestore
         where T : class
     {
         protected readonly ILogger _Logger;
-        protected readonly BaseRepository<Tdoc> _Repo;
+        protected readonly IFirestoreDataRepository<Tdoc> _Repo;
         protected readonly IFirestoreDocMapper<T, Tdoc> _Mapper;
 
         /// <summary>
@@ -30,25 +30,34 @@ namespace Umbrella.Infrastructure.Firestore
         /// <param name="collectionName">name of collection to save data on FIrestore instance</param>
         /// <param name="mapper">mapper to translate firestore document to DTO and viceversa</param>
         protected ModelEntityRepository(ILogger logger, string projectId, string dotnetEnv, bool autoGenerateId, string collectionName, IFirestoreDocMapper<T, Tdoc> mapper)
+            : this(logger, dotnetEnv, mapper, new BaseRepository<Tdoc>(projectId, collectionName, autoGenerateId))
         {
+        }
+        /// <summary>
+        /// Construcotr to make all dependencies explicit
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="dotnetEnv">Code of environment</param>
+        /// <param name="mapper">mapper to translate firestore document to DTO and viceversa</param>
+        /// <param name="firestoreRepo">component that implemetn generic repository for Firestore Documents</param>
+        protected ModelEntityRepository(ILogger logger, string dotnetEnv, 
+                                        IFirestoreDocMapper<T, Tdoc> mapper,
+                                        IFirestoreDataRepository<Tdoc> firestoreRepo)
+        {
+            this._Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             if (String.IsNullOrEmpty(dotnetEnv))
                 throw new ArgumentNullException(nameof(dotnetEnv));
-            if (String.IsNullOrEmpty(projectId))
-                throw new ArgumentNullException(nameof(projectId));
-            if (String.IsNullOrEmpty(collectionName))
-                throw new ArgumentNullException(nameof(collectionName));
-
-            this._Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this._Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+
             // fill variable
             var variableValue = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS");
-            if(String.IsNullOrEmpty(variableValue))
+            if (String.IsNullOrEmpty(variableValue))
             {
                 throw new InvalidOperationException($"MIssing Environment Variable: GOOGLE_APPLICATION_CREDENTIALS");
             }
-            
+
             this._Logger.LogDebug($"{this.GetType()} : Instance Firestore db...");
-            this._Repo = new BaseRepository<Tdoc>(projectId, collectionName, autoGenerateId);
+            this._Repo = firestoreRepo ?? throw new ArgumentNullException(nameof(firestoreRepo));
         }
 
         /// <summary>
@@ -92,8 +101,11 @@ namespace Umbrella.Infrastructure.Firestore
                 matchDoc = this._Repo.UpdateAsync(matchDoc).Result;
             else
                 matchDoc = this._Repo.AddAsync(matchDoc).Result;
-            this._Logger.LogDebug($"Document {matchDoc.Id} of type {typeof(T).FullName} succesfully persisted on Firestore");
-            return matchDoc.Id;
+            if(matchDoc == null)
+                this._Logger.LogWarning($"A Null Document has been returned from Firestoreof for type {typeof(T).FullName}");
+            else
+                this._Logger.LogDebug($"Document {matchDoc.Id} of type {typeof(T).FullName} succesfully persisted on Firestore");
+            return matchDoc != null ? matchDoc.Id : "";
         }
         /// <summary>
         /// Replaces the collection with the given list
@@ -118,6 +130,19 @@ namespace Umbrella.Infrastructure.Firestore
             }
             this._Logger.LogInformation($"Deleted {deleteCounter} Documents from Firestore");
         }
+        /// <summary>
+        /// Deletes physically the document
+        /// </summary>
+        /// <param name="keyValue"></param>
+        public void Delete(string keyValue)
+        {
+            if (String.IsNullOrEmpty(keyValue))
+                throw new ArgumentNullException(nameof(keyValue));
 
+            var doc = this._Repo.GetAsync(FirestoreDataReference.AsBaseFirestoreData(keyValue)).Result;
+            if(doc == null)
+                throw new NullReferenceException($"Unable to find document with id " + keyValue);
+            this._Repo.DeleteAsync((IBaseFirestoreData)doc).Wait();
+        }
     }
 }

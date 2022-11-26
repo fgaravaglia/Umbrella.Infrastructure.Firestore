@@ -11,7 +11,9 @@ namespace Umbrella.Infrastructure.Firestore.Tests
         const string CREDENTIAL_FILE_PATH = @"C:\Users\francesco\OneDrive\Coding\umbrella-dev-azuredevops.json";
 
         public string ProjectID { get{ return PROJECTID; }}
-        
+
+        public string CredentialsFilePath { get { return CREDENTIAL_FILE_PATH; } }
+
         public void SetCredentialsForGCP()
         {
             SetCredentialsIntoEnvironmentVariables(CREDENTIAL_FILE_PATH);

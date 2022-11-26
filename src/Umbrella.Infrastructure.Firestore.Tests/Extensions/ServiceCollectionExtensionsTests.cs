@@ -3,29 +3,11 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Umbrella.Infrastructure.Firestore.Abstractions;
 using Umbrella.Infrastructure.Firestore.Extensions;
+using Umbrella.Infrastructure.Firestore.Tests.Entities;
 
 namespace Umbrella.Infrastructure.Firestore.Tests.Extensions
 {
     #region Used Types
-
-    public class TestEntity
-    {
-        public string Id {get; set;}
-    }
-
-    public class TestEntityDocument : IBaseFirestoreData
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime? LastUpdatedOn { get; set; }
-
-        public void SetDocumentId(string id)
-        {
-            this.Id = id;
-        }
-    }
-
 
     public interface IEntityService : IModelEntityRepository<TestEntity>
     {
@@ -175,7 +157,8 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Extensions
             {
                 return new TestFirestoreService(this._Logger, "my-gcp-proj", environmentName, true, "my-collection", this._Mapper);
             };
-            string path = @"C:\Temp\credentials.json";
+            string path = new CredentialManager().CredentialsFilePath;
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "");
 
             //******* WHEN
             services.AddRepository<IEntityService, TestFirestoreService, TestEntity>(instanceFactory, environmentName, path);

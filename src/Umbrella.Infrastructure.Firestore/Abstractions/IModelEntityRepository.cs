@@ -30,5 +30,10 @@ namespace Umbrella.Infrastructure.Firestore.Abstractions
         /// </summary>
         /// <param name="dtos"></param>
         void SaveAll(IEnumerable<T> dtos);
+        /// <summary>
+        /// Deletes physically the document
+        /// </summary>
+        /// <param name="keyValue"></param>
+        void Delete(string keyValue);
     }
 }

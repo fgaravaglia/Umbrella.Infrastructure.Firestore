@@ -10,7 +10,7 @@ namespace Umbrella.Infrastructure.Firestore.Tests
     public abstract class BaseFirestoreTests<T> where T : IBaseFirestoreData
     {
         protected List<IBaseFirestoreData> _persistedEntities;
-        CredentialManager _CredentialManager;
+        protected CredentialManager _CredentialManager;
 
         public abstract string CollectionName { get; }
 
@@ -24,7 +24,8 @@ namespace Umbrella.Infrastructure.Firestore.Tests
         [TearDown]
         public virtual void TearDown()
         {
-            if (!this._persistedEntities.Any())
+            if (this._persistedEntities == null ||
+                (this._persistedEntities != null && !this._persistedEntities.Any()))
                 return;
 
             var repo = InstanceRepostiory();
