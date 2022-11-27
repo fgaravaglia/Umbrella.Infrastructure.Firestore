@@ -2,6 +2,7 @@ using Google.Cloud.Firestore;
 using Umbrella.Infrastructure.Firestore.Abstractions;
 using Umbrella.Infrastructure.Firestore.Extensions;
 using System.Globalization;
+using Umbrella.Infrastructure.Firestore.Tests.Entities.KeyValuePairExample;
 
 namespace Umbrella.Infrastructure.Firestore.Tests
 {
@@ -286,7 +287,47 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             Assert.Pass();
         }
 
+        #region Using Specific Document
 
+        [Test]
+        public void AddAsync_PersistsDocument_WithPropertyAsListOfKeyValuePair()
+        {
+            //******* GIVEN
+            var id = Guid.NewGuid().ToString();
+            var creationDate = DateTime.Now.ToFirestoreTimeStamp();
+            var testEntity = new TestEntityWIthKeyValuePairListDocument()
+            {
+                Counter = 22,
+                Name = "XXX",
+                CreatedOn = creationDate
+            };
+            testEntity.SetDocumentId(id);
+            testEntity.AddPair("A", "1222");
+            testEntity.AddPair("B", "-1.5");
+            testEntity.AddPair("C", "22");
+            var repo = InstanceRepositoryForDocument<TestEntityWIthKeyValuePairListDocument>();
+
+            //******* WHEN
+            var existingEntity = repo.AddAsync(testEntity).Result as TestEntityWIthKeyValuePairListDocument;
+            //this._persistedEntities.Add(existingEntity);
+
+            //******* ASSE
+            Assert.False(existingEntity == null, "Unexpected error during Add");
+            Assert.That(existingEntity.Id, Is.EqualTo(id));
+            Assert.That(existingEntity.Name, Is.EqualTo("XXX"));
+            Assert.That(existingEntity.Counter, Is.EqualTo(22));
+            Assert.That(existingEntity.CreatedOn, Is.EqualTo(creationDate));
+
+            var readEntity = repo.GetAsync(testEntity).Result as TestEntityWIthKeyValuePairListDocument;
+            Assert.False(readEntity == null);
+            Assert.That(readEntity.Id, Is.EqualTo(id), "Read entity has unexpected value for ID");
+            Assert.That(readEntity.Name, Is.EqualTo("XXX"), "Read entity has unexpected value for Name");
+            Assert.That(readEntity.Counter, Is.EqualTo(22), "Read entity has unexpected value for Counter");
+            AssertDatesAreEquals(readEntity.CreatedOn, creationDate, "Read Entity has unexpected value for Creation Date");
+            Assert.Pass();
+        }
+
+        #endregion
     }
 
 }

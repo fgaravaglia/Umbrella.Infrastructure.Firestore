@@ -3,6 +3,7 @@ using Moq;
 using Umbrella.Infrastructure.Firestore.Abstractions;
 using Umbrella.Infrastructure.Firestore.Tests.Entities;
 using Umbrella.Infrastructure.Firestore.Extensions;
+using Umbrella.Infrastructure.Firestore.Tests.Entities.KeyValuePairExample;
 
 namespace Umbrella.Infrastructure.Firestore.Tests
 {
@@ -313,7 +314,41 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             Assert.Pass();
         }
 
+        [Test]
+        public void SaveEntityWIthKeyValuePairList_PersistExpectedDocument()
+        {
+            //******* GIVEN
+            TestEntityWIthKeyValuePairList dto = new TestEntityWIthKeyValuePairList()
+            {
+                ID = Guid.NewGuid(),
+                Name = "yyyy",
+                Counter = 1000
+            };
+            dto.AddPair("A", "123");
+            dto.AddPair("B", "-1,5");
+            dto.AddPair("C", "1000");
 
+            var mapper = new EntityKeyValuePairMapper();
+            var firestoreRepo = new BaseRepository<TestEntityWIthKeyValuePairListDocument>(this._CredentialManager.ProjectID,
+                                                                                            this.CollectionName,
+                                                                                            false);
+            var repository = new KeyValuePairTestEntityRepository(this._Logger,
+                                                                "localhost",
+                                                                mapper,
+                                                                firestoreRepo);
+
+            //******* WHEN
+            string newId = repository.Save(dto);
+            
+            //******* ASSERT
+            Assert.False(String.IsNullOrEmpty(newId));
+            var readEntity = repository.GetById(newId);
+            Assert.False(readEntity == null);
+            Assert.That(readEntity.ID, Is.EqualTo(dto.ID));
+            Assert.That(readEntity.Name, Is.EqualTo("yyyy"));
+            Assert.That(readEntity.Counter, Is.EqualTo(1000));
+            Assert.Pass();
+        }
         #endregion
 
         #region Tests on Get

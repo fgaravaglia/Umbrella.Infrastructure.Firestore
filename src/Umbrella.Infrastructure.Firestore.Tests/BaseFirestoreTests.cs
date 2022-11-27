@@ -51,6 +51,12 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             return new BaseRepository<T>(this._CredentialManager.ProjectID, CollectionName, autogenerateId);
         }
 
+        protected BaseRepository<Tdoc> InstanceRepositoryForDocument<Tdoc>(bool autogenerateId = false) where Tdoc : IBaseFirestoreData
+        {
+            this._CredentialManager.SetCredentialsForGCP();
+            return new BaseRepository<Tdoc>(this._CredentialManager.ProjectID, CollectionName, autogenerateId);
+        }
+
         protected static void AssertDatesAreEquals(DateTime actualDate, DateTime expectedData, string message = "")
         {
             Assert.That(actualDate.ToString("YYYY-MM-dd HH:mm:ss fff", CultureInfo.InvariantCulture),

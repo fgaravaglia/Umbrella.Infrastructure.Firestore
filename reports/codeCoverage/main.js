@@ -221,7 +221,10 @@ var assemblies = [
   {
     "name": "Umbrella.Infrastructure.Firestore",
     "classes": [
+      { "name": "Umbrella.Infrastructure.Firestore.Abstractions.FirestoreDocument", "rp": "Umbrella.Infrastructure.Firestore_FirestoreDocument.html", "cl": 10, "ucl": 4, "cal": 14, "tl": 48, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "Umbrella.Infrastructure.Firestore.Abstractions.FirestoreKeyValuePair", "rp": "Umbrella.Infrastructure.Firestore_FirestoreKeyValuePair.html", "cl": 12, "ucl": 4, "cal": 16, "tl": 60, "ct": "LineCoverage", "cbm": "-", "cb": 1, "tb": 4, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "Umbrella.Infrastructure.Firestore.BaseRepository<T>", "rp": "Umbrella.Infrastructure.Firestore_BaseRepository_1.html", "cl": 44, "ucl": 11, "cal": 55, "tl": 129, "ct": "LineCoverage", "cbm": "-", "cb": 14, "tb": 20, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "Umbrella.Infrastructure.Firestore.EntityKeyValuePair", "rp": "Umbrella.Infrastructure.Firestore_EntityKeyValuePair.html", "cl": 14, "ucl": 0, "cal": 14, "tl": 58, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "Umbrella.Infrastructure.Firestore.Extensions.ServiceCollectionExtensions", "rp": "Umbrella.Infrastructure.Firestore_ServiceCollectionExtensions.html", "cl": 14, "ucl": 0, "cal": 14, "tl": 41, "ct": "LineCoverage", "cbm": "-", "cb": 12, "tb": 12, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "Umbrella.Infrastructure.Firestore.ModelEntityRepository<T1, T2>", "rp": "Umbrella.Infrastructure.Firestore_ModelEntityRepository_2.html", "cl": 45, "ucl": 33, "cal": 78, "tl": 148, "ct": "LineCoverage", "cbm": "-", "cb": 32, "tb": 50, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
     ]},
