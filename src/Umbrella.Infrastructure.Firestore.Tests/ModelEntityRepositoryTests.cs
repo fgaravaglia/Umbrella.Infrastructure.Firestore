@@ -4,6 +4,7 @@ using Umbrella.Infrastructure.Firestore.Abstractions;
 using Umbrella.Infrastructure.Firestore.Tests.Entities;
 using Umbrella.Infrastructure.Firestore.Extensions;
 using Umbrella.Infrastructure.Firestore.Tests.Entities.KeyValuePairExample;
+using Umbrella.Infrastructure.Firestore.Tests.Mappers;
 
 namespace Umbrella.Infrastructure.Firestore.Tests
 {
@@ -328,7 +329,7 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             dto.AddPair("B", "-1,5");
             dto.AddPair("C", "1000");
 
-            var mapper = new EntityKeyValuePairMapper();
+            var mapper = new TestEntityWIthKeyValuePairListMapper();
             var firestoreRepo = new BaseRepository<TestEntityWIthKeyValuePairListDocument>(this._CredentialManager.ProjectID,
                                                                                             this.CollectionName,
                                                                                             false);

@@ -7,12 +7,12 @@ using Umbrella.Infrastructure.Firestore.Extensions;
 
 namespace Umbrella.Infrastructure.Firestore.Tests.Entities.KeyValuePairExample
 {
-    public class EntityKeyValuePairMapper : IFirestoreDocMapper<TestEntityWIthKeyValuePairList, TestEntityWIthKeyValuePairListDocument>
+    public class TestEntityWIthKeyValuePairListMapper : IFirestoreDocMapper<TestEntityWIthKeyValuePairList, TestEntityWIthKeyValuePairListDocument>
     {
         public TestEntityWIthKeyValuePairList FromFirestoreDoc(TestEntityWIthKeyValuePairListDocument doc)
         {
-            if(doc == null)
-            return null;
+            if (doc == null)
+                return null;
 
             var dto = new TestEntityWIthKeyValuePairList();
             dto.ID = Guid.Parse(doc.Id);
@@ -24,17 +24,14 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Entities.KeyValuePairExample
             dto.PointsPerRule.Clear();
             foreach (var docPair in doc.PointsPerRule)
             {
-                var pair = new EntityKeyValuePair(docPair.Id, docPair.Value);
-                pair.CreatedOn = docPair.CreatedOn;
-                pair.LastUpdatedOn = docPair.LastUpdatedOn;
-                dto.PointsPerRule.Add(pair);
+                dto.PointsPerRule.Add(docPair.MapToDTO());
             }
             return dto;
         }
 
         public TestEntityWIthKeyValuePairListDocument ToFirestoreDocument(TestEntityWIthKeyValuePairList dto)
         {
-            if(dto == null)
+            if (dto == null)
                 return null;
 
             var doc = new TestEntityWIthKeyValuePairListDocument();
@@ -45,12 +42,9 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Entities.KeyValuePairExample
             doc.Counter = dto.Counter;
 
             doc.PointsPerRule.Clear();
-            foreach(var pair in dto.PointsPerRule)
+            foreach (var pair in dto.PointsPerRule)
             {
-                var docPair = new FirestoreKeyValuePair(pair.Id, pair.Value);
-                docPair.CreatedOn = pair.CreatedOn.ToFirestoreTimeStamp();
-                docPair.LastUpdatedOn = pair.LastUpdatedOn.ToFirestoreNullableTimeStamp();
-                doc.PointsPerRule.Add(docPair);
+                doc.PointsPerRule.Add(MapperExtensions.MapToFirestoreDocument(pair));
             }
 
             return doc;
