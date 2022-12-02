@@ -1,4 +1,4 @@
-namespace Umbrella.Infrastructure.Firestore
+namespace Umbrella.Infrastructure.Firestore.Abstractions
 {
     /// <summary>
     /// Abstraction for mapper from Firestore document to a DTO class

@@ -1,6 +1,7 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Umbrella.Infrastructure.Firestore
+namespace Umbrella.Infrastructure.Firestore.Abstractions
 {
     /// <summary>
     /// Represents the base data that will exists on all records.
@@ -10,8 +11,7 @@ namespace Umbrella.Infrastructure.Firestore
         /// <summary>
         /// Gets the Id on document
         /// </summary>
-         string Id { get; }
-
+        string Id { get; }
         /// <summary>
         /// Gets the name on document
         /// </summary>
@@ -33,6 +33,7 @@ namespace Umbrella.Infrastructure.Firestore
         void SetDocumentId(string id);
     }
 
+    [ExcludeFromCodeCoverage]
     public class FirestoreDataReference : IBaseFirestoreData
     {
         public string Id {get; private set;}
