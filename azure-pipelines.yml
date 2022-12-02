@@ -19,7 +19,7 @@ schedules:
       include:
         - main
 
-pool:cd scri  
+pool:
   vmImage: "ubuntu-latest"
 
 parameters:
