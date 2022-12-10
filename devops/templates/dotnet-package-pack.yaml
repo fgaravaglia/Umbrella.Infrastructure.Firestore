@@ -57,8 +57,8 @@ steps:
       Company: ${{ parameters.company }}
       Copyright: ${{ parameters.copyright }}
       PackageId: "${{ parameters.projName }}"
-      VersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.${{ parameters.PatchVersion }}.$(Build.buildNumber)
-      FileVersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.${{ parameters.PatchVersion }}.$(Build.buildNumber)
+      VersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.${{ parameters.PatchVersion }}.${{ parameters.buildNumber }}
+      FileVersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.${{ parameters.PatchVersion }}.${{ parameters.buildNumber }}
       InformationalVersion: ${{ parameters.buildNumber }}
 
   # task to build the solution
