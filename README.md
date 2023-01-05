@@ -81,15 +81,34 @@ create a class to map the firestore document to the entity and viceversa, inheri
 
         public DiaryDto FromFirestoreDoc(DiaryDocument doc)
         {
-            throw new NotImplementedException();
+            if (doc == null)
+                return null;
+
+            var dto = new DiaryDto();
+
+            . . .
+
+            return dto
         }
 
         public DiaryDocument ToFirestoreDocument(DiaryDto dto)
         {
-            throw new NotImplementedException();
+            if (dto == null)
+                return null;
+
+            var doc = new DiaryDocument();
+            doc.SetDocumentId(dto.ID);
+            doc.CreatedOn = dto.CreatedOn.ToFirestoreTimeStamp()
+            doc.LastUpdatedOn = dto.LastUpdatedOn.ToFirestoreNullableTimeStamp();
+
+            . . .
+
+            return dto
         }
     }
 ```
+
+Please notice that it's necessary to invoke extension _ToFirestoreTimeStamp_ or _ToFirestoreNullableTimeStamp_ to get right timestamp data.
 
 ## Create the repository
 
