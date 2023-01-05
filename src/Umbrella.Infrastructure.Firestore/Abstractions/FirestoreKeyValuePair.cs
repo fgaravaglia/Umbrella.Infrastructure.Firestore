@@ -15,6 +15,10 @@ namespace Umbrella.Infrastructure.Firestore.Abstractions
         [FirestoreProperty]
         public string Value { get; set; }
 
+        /// <summary>
+        /// COnverts the value as double
+        /// </summary>
+        /// <value></value>
         public double DoubleValue
         {
             get
@@ -25,7 +29,20 @@ namespace Umbrella.Infrastructure.Firestore.Abstractions
                 return 0.0;
             }
         }
-
+        /// <summary>
+        /// COnverts the value as integer
+        /// </summary>
+        /// <value></value>
+        public int IntegerValue
+        {
+            get
+            {
+                int output;
+                if (Int32.TryParse(this.Value, out output))
+                    return output;
+                return 0;
+            }
+        }
         /// <summary>
         /// Empty COnstructor
         /// </summary>

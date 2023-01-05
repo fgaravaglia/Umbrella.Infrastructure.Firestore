@@ -18,7 +18,7 @@ namespace Umbrella.Infrastructure.Firestore.Abstractions
         /// </summary>
         /// <param name="keyValue"></param>
         /// <returns></returns>
-        T GetById(string keyValue);
+        T? GetById(string keyValue);
         /// <summary>
         /// saves it
         /// </summary>
