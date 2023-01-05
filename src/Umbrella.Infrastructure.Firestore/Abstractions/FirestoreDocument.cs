@@ -26,7 +26,7 @@ namespace Umbrella.Infrastructure.Firestore.Abstractions
         /// <summary>
         /// Empty COnstructor
         /// </summary>
-        public FirestoreDocument()
+        protected FirestoreDocument()
         {
             this.Id = "";
             this.Name = "";
