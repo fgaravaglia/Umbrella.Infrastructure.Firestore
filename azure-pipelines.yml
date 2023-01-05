@@ -126,6 +126,7 @@ stages:
 
   - stage: PackAndPush
     dependsOn: Build
+    condition: in(dependencies.Build.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
     jobs:
       - job: NugetPush
         steps:

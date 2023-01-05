@@ -26,8 +26,8 @@ namespace Umbrella.Infrastructure.Firestore
         /// <param name="logger"></param>
         /// <param name="projectId">GCP project Id where firestore DB has been provisioned</param>
         /// <param name="dotnetEnv">Code of environment</param>
-        /// <param name="autoGenerateId">TRUE to generate id of object; FALSE to use the id set uoside the repo</param>
-        /// <param name="collectionName">name of collection to save data on FIrestore instance</param>
+        /// <param name="autoGenerateId">TRUE to generate id of object; FALSE to use the id set outside the repo</param>
+        /// <param name="collectionName">name of collection to save data on Firestore instance</param>
         /// <param name="mapper">mapper to translate firestore document to DTO and viceversa</param>
         protected ModelEntityRepository(ILogger logger, string projectId, string dotnetEnv, bool autoGenerateId, string collectionName, IFirestoreDocMapper<T, Tdoc> mapper)
             : this(logger, dotnetEnv, mapper, new BaseRepository<Tdoc>(projectId, collectionName, autoGenerateId))
