@@ -29,6 +29,9 @@ parameters:
   - name: MinorVersion
     displayName: "Minor Version"
     default: 1
+  - name: PatchVersion
+    displayName: "Patch Version"
+    default: 1
   - name: authors
     displayName: "Names of authors of the target package"
     default: "FG"
@@ -51,7 +54,7 @@ variables:
   buildConfiguration: "Release"
   targetFramework: "6.x"
   packageId: Umbrella.Infrastructure.Firestore
-  nugetVersion: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId)
+  nugetVersion: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.${{ parameters.PatchVersion }}.$(Build.BuildId)
   testReportFileName: cobertura.xml
 
 stages:
@@ -85,21 +88,6 @@ stages:
                 sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/$(testReportFileName)
                 sonar.cs.vscoveragexml.reportsPaths=coverage.xml
             condition: eq(${{ parameters.SonarScanEnabled }}, true)
-
-          - task: Assembly-Info-NetCore@2
-            displayName: Set Assembly Info
-            inputs:
-              Path: "$(Build.SourcesDirectory)"
-              FileNames: "**/*.csproj"
-              InsertAttributes: true
-              FileEncoding: "auto"
-              WriteBOM: false
-              Authors: "${{ parameters.authors }}"
-              Company: "${{ parameters.company }}"
-              Copyright: "${{ parameters.copyright }}"
-              VersionNumber: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId).0"
-              FileVersionNumber: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId).0"
-              InformationalVersion: "$(Build.BuildNumber)"
 
           - template: .\devops\templates\dotnet-build.yaml
             parameters:
@@ -138,6 +126,7 @@ stages:
 
   - stage: PackAndPush
     dependsOn: Build
+    condition: in(dependencies.Build.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
     jobs:
       - job: NugetPush
         steps:
@@ -153,27 +142,13 @@ stages:
               Write-Host "##vso[task.setvariable variable=ReadApiKey;]$key"
             displayName: Get Nuget.org NugetApiKey
 
-          - task: Assembly-Info-NetCore@2
-            displayName: Set Assembly Info
-            inputs:
-              Path: "$(Build.SourcesDirectory)"
-              FileNames: "**/*.csproj"
-              InsertAttributes: true
-              FileEncoding: "auto"
-              WriteBOM: false
-              Authors: "${{ parameters.authors }}"
-              Company: "${{ parameters.company }}"
-              Copyright: "${{ parameters.copyright }}"
-              VersionNumber: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId).0"
-              FileVersionNumber: "${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.$(Build.BuildId).0"
-              InformationalVersion: "$(Build.BuildNumber)"
-
           - template: .\devops\templates\dotnet-package-pack.yaml
             parameters:
               projPath: src/Umbrella.Infrastructure.Firestore
               projName: Umbrella.Infrastructure.Firestore
               MajorVersion: ${{ parameters.MajorVersion }}
               MinorVersion: ${{ parameters.MinorVersion }}
+              PatchVersion: ${{ parameters.PatchVersion }}
               buildNumber: $(Build.BuildId)
 
           - task: DotNetCoreCLI@2

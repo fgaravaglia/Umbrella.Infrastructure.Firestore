@@ -11,6 +11,9 @@ parameters:
   - name: MinorVersion
     displayName: "Minor Version"
     default: 1
+  - name: PatchVersion
+    displayName: "Patch Version"
+    default: 0
   - name: buildNumber
     displayName: "Number of current Build"
     default: ""
@@ -54,8 +57,8 @@ steps:
       Company: ${{ parameters.company }}
       Copyright: ${{ parameters.copyright }}
       PackageId: "${{ parameters.projName }}"
-      VersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.0.0
-      FileVersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.0.0
+      VersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.${{ parameters.PatchVersion }}.${{ parameters.buildNumber }}
+      FileVersionNumber: ${{ parameters.MajorVersion }}.${{ parameters.MinorVersion }}.${{ parameters.PatchVersion }}.${{ parameters.buildNumber }}
       InformationalVersion: ${{ parameters.buildNumber }}
 
   # task to build the solution
