@@ -138,3 +138,20 @@ Please notice that:
 
 - autoGenerateId: TRUE to generate id of object; FALSE to use the id set outside the repo
 - collectionName: name of collection to save data on Firestore instance
+
+In order to perform custom queries, use the method provided by base class:
+
+```c#
+
+        DiaryDto GetByUsername(string username)
+        {
+            if (String.IsNullOrEmpty(username))
+                throw new ArgumentNullException(nameof(username));
+
+            // build the query on Firestore document
+            var query = this._Repo.GetReference().WhereEqualTo("Username", username);
+            var existing = (this._Repo.QueryRecordsAsync(query).Result as List<DiaryDocument>).FirstOrDefault();
+            return this._Mapper.FromFirestoreDocumnet(existing);
+        }
+
+```
