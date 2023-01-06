@@ -14,17 +14,17 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Entities
     /// </summary>
     public class TestEntityRepository : ModelEntityRepository<TestEntity, TestEntityDocument>
     {
-        public TestEntityRepository(ILogger logger, string projectId, string dotnetEnv, bool autoGenerateId,
+        public TestEntityRepository(ILogger logger, string projectId, bool autoGenerateId,
                                     string collectionName, IFirestoreDocMapper<TestEntity, TestEntityDocument> mapper)
-            : base(logger, projectId, dotnetEnv, autoGenerateId, collectionName, mapper)
+            : base(logger, projectId, autoGenerateId, collectionName, mapper)
         {
 
         }
 
-        public TestEntityRepository(ILogger logger, string dotnetEnv, 
+        public TestEntityRepository(ILogger logger,
                                     IFirestoreDocMapper<TestEntity, TestEntityDocument> mapper,
                                     IFirestoreDataRepository<TestEntityDocument> firestoreRepo)
-            : base(logger,  dotnetEnv,  mapper, firestoreRepo)
+            : base(logger,  mapper, firestoreRepo)
         {
 
         }

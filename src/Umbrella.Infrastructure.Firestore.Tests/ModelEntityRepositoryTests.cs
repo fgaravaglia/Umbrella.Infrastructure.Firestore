@@ -62,7 +62,6 @@ namespace Umbrella.Infrastructure.Firestore.Tests
         private void InstanceModelRepository()
         {
             this._ModelRepository = new TestEntityRepository(this._Logger,
-                                                            "localhost",
                                                             this._Mapper, 
                                                             this._DocumentRepository);
         }
@@ -75,14 +74,11 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             //******* GIVEN
             string projectId = "";
             string collectionName = "TestEntity";
-            string dotnetEnv = "localhost";
             bool autoGenerateId = true;
             Func<ModelEntityRepository<TestEntity, TestEntityDocument>> factory = () =>
             {
-                return new TestEntityRepository(
-                                                _Logger, 
+                return new TestEntityRepository(_Logger, 
                                                 projectId, 
-                                                dotnetEnv, 
                                                 autoGenerateId, 
                                                 collectionName,
                                                 this._Mapper);
@@ -94,30 +90,6 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             Assert.Pass();
         }
 
-        [Test]
-        public void Constructor_ThrowEx_IfDotNetEnvIsNull()
-        {
-            //******* GIVEN
-            string projectId = "projectId";
-            string collectionName = "TestEntity";
-            string dotnetEnv = "";
-            bool autoGenerateId = true;
-            Func<ModelEntityRepository<TestEntity, TestEntityDocument>> factory = () =>
-            {
-                return new TestEntityRepository(
-                                                _Logger,
-                                                projectId,
-                                                dotnetEnv,
-                                                autoGenerateId,
-                                                collectionName,
-                                                this._Mapper);
-            };
-
-            //******* WHEN
-            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => factory.Invoke());
-            Assert.That(ex.ParamName, Is.EqualTo("dotnetEnv"));
-            Assert.Pass();
-        }
 
         [Test]
         public void Constructor_ThrowEx_IfCollectionNameIsNull()
@@ -125,14 +97,12 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             //******* GIVEN
             string projectId = "projectId";
             string collectionName = "";
-            string dotnetEnv = "localhost";
             bool autoGenerateId = true;
             Func<ModelEntityRepository<TestEntity, TestEntityDocument>> factory = () =>
             {
                 return new TestEntityRepository(
                                                 _Logger,
                                                 projectId,
-                                                dotnetEnv,
                                                 autoGenerateId,
                                                 collectionName,
                                                 this._Mapper);
@@ -150,14 +120,11 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             //******* GIVEN
             string projectId = "projectId";
             string collectionName = "TestEntity";
-            string dotnetEnv = "localhost";
             bool autoGenerateId = true;
             Func<ModelEntityRepository<TestEntity, TestEntityDocument>> factory = () =>
             {
-                return new TestEntityRepository(
-                                                null,
+                return new TestEntityRepository(null,
                                                 projectId,
-                                                dotnetEnv,
                                                 autoGenerateId,
                                                 collectionName,
                                                 this._Mapper);
@@ -175,14 +142,11 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             //******* GIVEN
             string projectId = "projectId";
             string collectionName = "TestEntity";
-            string dotnetEnv = "localhost";
             bool autoGenerateId = true;
             Func<ModelEntityRepository<TestEntity, TestEntityDocument>> factory = () =>
             {
-                return new TestEntityRepository(
-                                                _Logger,
+                return new TestEntityRepository(_Logger,
                                                 projectId,
-                                                dotnetEnv,
                                                 autoGenerateId,
                                                 collectionName,
                                                 null);
@@ -200,14 +164,12 @@ namespace Umbrella.Infrastructure.Firestore.Tests
             //******* GIVEN
             string projectId = "projectId";
             string collectionName = "TestEntity";
-            string dotnetEnv = "localhost";
             bool autoGenerateId = true;
             Func<ModelEntityRepository<TestEntity, TestEntityDocument>> factory = () =>
             {
                 return new TestEntityRepository(
                                                 _Logger,
                                                 projectId,
-                                                dotnetEnv,
                                                 autoGenerateId,
                                                 collectionName,
                                                 this._Mapper);
@@ -334,7 +296,6 @@ namespace Umbrella.Infrastructure.Firestore.Tests
                                                                                             this.CollectionName,
                                                                                             false);
             var repository = new KeyValuePairTestEntityRepository(this._Logger,
-                                                                "localhost",
                                                                 mapper,
                                                                 firestoreRepo);
 

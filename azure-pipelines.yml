@@ -40,7 +40,7 @@ parameters:
     default: "Innova Solutions"
   - name: copyright
     displayName: "Copyright"
-    default: "FG 2022"
+    default: "FG 2022 - 2023"
   - name: SonarScanEnabled
     displayName: "Enable Sonar Scan"
     type: boolean

@@ -15,17 +15,17 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Entities.KeyValuePairExample
     /// </summary>
     public class KeyValuePairTestEntityRepository : ModelEntityRepository<TestEntityWIthKeyValuePairList, TestEntityWIthKeyValuePairListDocument>
     {
-        public KeyValuePairTestEntityRepository(ILogger logger, string projectId, string dotnetEnv, bool autoGenerateId,
+        public KeyValuePairTestEntityRepository(ILogger logger, string projectId, bool autoGenerateId,
                                     string collectionName, IFirestoreDocMapper<TestEntityWIthKeyValuePairList, TestEntityWIthKeyValuePairListDocument> mapper)
-            : base(logger, projectId, dotnetEnv, autoGenerateId, collectionName, mapper)
+            : base(logger, projectId, autoGenerateId, collectionName, mapper)
         {
 
         }
 
-        public KeyValuePairTestEntityRepository(ILogger logger, string dotnetEnv, 
+        public KeyValuePairTestEntityRepository(ILogger logger, 
                                     IFirestoreDocMapper<TestEntityWIthKeyValuePairList, TestEntityWIthKeyValuePairListDocument> mapper,
                                     IFirestoreDataRepository<TestEntityWIthKeyValuePairListDocument> firestoreRepo)
-            : base(logger,  dotnetEnv,  mapper, firestoreRepo)
+            : base(logger,  mapper, firestoreRepo)
         {
 
         }

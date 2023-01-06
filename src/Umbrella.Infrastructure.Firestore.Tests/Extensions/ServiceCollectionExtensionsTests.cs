@@ -16,9 +16,9 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Extensions
 
     public class TestFirestoreService : ModelEntityRepository<TestEntity, TestEntityDocument>, IEntityService
     {
-        public TestFirestoreService(ILogger logger, string projectId, string dotnetEnv, bool autoGenerateId, 
+        public TestFirestoreService(ILogger logger, string projectId, bool autoGenerateId, 
                                     string collectionName, IFirestoreDocMapper<TestEntity, TestEntityDocument> mapper) 
-            : base(logger, projectId, dotnetEnv, autoGenerateId, collectionName, mapper)
+            : base(logger, projectId, autoGenerateId, collectionName, mapper)
         {
         }
     }
@@ -109,7 +109,7 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Extensions
             string environmentName = "localhost";
             Func<IServiceProvider, TestFirestoreService> instanceFactory = x =>
             {
-                return new TestFirestoreService(this._Logger, "my-gcp-proj", environmentName, true, "my-collection", this._Mapper);
+                return new TestFirestoreService(this._Logger, "my-gcp-proj", true, "my-collection", this._Mapper);
             };
             string path = @"";
 
@@ -133,7 +133,7 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Extensions
             string environmentName = "dev";
             Func<IServiceProvider, TestFirestoreService> instanceFactory = x =>
             {
-                return new TestFirestoreService(this._Logger, "my-gcp-proj", environmentName, true, "my-collection", this._Mapper);
+                return new TestFirestoreService(this._Logger, "my-gcp-proj",  true, "my-collection", this._Mapper);
             };
 
             //******* WHEN
@@ -155,7 +155,7 @@ namespace Umbrella.Infrastructure.Firestore.Tests.Extensions
             string environmentName = "localhost";
             Func<IServiceProvider, TestFirestoreService> instanceFactory = x =>
             {
-                return new TestFirestoreService(this._Logger, "my-gcp-proj", environmentName, true, "my-collection", this._Mapper);
+                return new TestFirestoreService(this._Logger, "my-gcp-proj",  true, "my-collection", this._Mapper);
             };
             string path = new CredentialManager().CredentialsFilePath;
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "");

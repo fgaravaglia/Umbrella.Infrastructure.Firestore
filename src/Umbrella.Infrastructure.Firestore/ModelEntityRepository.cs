@@ -25,28 +25,24 @@ namespace Umbrella.Infrastructure.Firestore
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="projectId">GCP project Id where firestore DB has been provisioned</param>
-        /// <param name="dotnetEnv">Code of environment</param>
         /// <param name="autoGenerateId">TRUE to generate id of object; FALSE to use the id set outside the repo</param>
         /// <param name="collectionName">name of collection to save data on Firestore instance</param>
         /// <param name="mapper">mapper to translate firestore document to DTO and viceversa</param>
-        protected ModelEntityRepository(ILogger logger, string projectId, string dotnetEnv, bool autoGenerateId, string collectionName, IFirestoreDocMapper<T, Tdoc> mapper)
-            : this(logger, dotnetEnv, mapper, new BaseRepository<Tdoc>(projectId, collectionName, autoGenerateId))
+        protected ModelEntityRepository(ILogger logger, string projectId, bool autoGenerateId, string collectionName, IFirestoreDocMapper<T, Tdoc> mapper)
+            : this(logger, mapper, new BaseRepository<Tdoc>(projectId, collectionName, autoGenerateId))
         {
         }
         /// <summary>
         /// Construcotr to make all dependencies explicit
         /// </summary>
         /// <param name="logger"></param>
-        /// <param name="dotnetEnv">Code of environment</param>
         /// <param name="mapper">mapper to translate firestore document to DTO and viceversa</param>
         /// <param name="firestoreRepo">component that implemetn generic repository for Firestore Documents</param>
-        protected ModelEntityRepository(ILogger logger, string dotnetEnv, 
+        protected ModelEntityRepository(ILogger logger, 
                                         IFirestoreDocMapper<T, Tdoc> mapper,
                                         IFirestoreDataRepository<Tdoc> firestoreRepo)
         {
             this._Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            if (String.IsNullOrEmpty(dotnetEnv))
-                throw new ArgumentNullException(nameof(dotnetEnv));
             this._Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
             // fill variable
