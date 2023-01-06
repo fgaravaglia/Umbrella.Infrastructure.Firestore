@@ -125,10 +125,9 @@ To create a repository for your dto class, you have ho ineherit from proper clas
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="projectId">GCP project Id where firestore DB has been provisioned</param>
-        /// <param name="dotnetEnv">Code of environment</param>
         /// <param name="mapper">mapper to translate firestore document to DTO and viceversa</param>
-        public FirestoreDiaryRepository(ILogger logger, string projectId, string dotnetEnv, IFirestoreDocMapper<DiaryDto, DiaryDocument> mapper) 
-            : base(logger, projectId, dotnetEnv, false, "HeadacheDiary", mapper)
+        public FirestoreDiaryRepository(ILogger logger, string projectId, IFirestoreDocMapper<DiaryDto, DiaryDocument> mapper) 
+            : base(logger, projectId,  false, "HeadacheDiary", mapper)
         {
         }
     }
